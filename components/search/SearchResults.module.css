@@ -1,0 +1,115 @@
+/* ==========================================================
+   Search results – Figma node 34-1548 (Tiffexx Desktop UI)
+   Values copied 1:1 from the supplied styles.css.
+   Element-level resets (img/button/a/ul, margin, box-sizing) already
+   live in globals.css, so only class rules are needed here.
+   ========================================================== */
+
+.page {
+  --red-11: #2e0c09; --red-44: #b5432c; --red-47: #c0522f;
+  --orange-12: #2b1b14; --orange-42: #7a6a5c; --orange-55: #9c8a7b; --orange-56: #e3a73b;
+  --orange-60: #d8a15c; --orange-65: #b7a896; --orange-69: #c2af9f; --orange-80: #f1d9a8;
+  --orange-85: #e9decb; --orange-85-2: #e6d9cc;
+  --green-30: #3c5b43; --chartreuse-38: #587a4a;
+  --grey-90: #f2eada; --grey-94: #eef5ea; --grey-94-2: #fbf3e4; --grey-95: #fbf6ec;
+  --brand: #591a11; --ink: #1d1f20; --muted: #757575;
+  --font-head: var(--font-plus-jakarta-sans), 'Plus Jakarta Sans', sans-serif;
+  --font-body: var(--font-work-sans), 'Work Sans', sans-serif;
+
+  max-width: 1512px;
+  margin: 0 auto;
+  background: #fff;
+  font-family: var(--font-head);
+  color: var(--orange-12);
+}
+
+/* Main */
+.main { padding: 46px 32px 0; display: flex; flex-direction: column; gap: 46px; }
+.section { display: flex; flex-direction: column; gap: 16px; }
+.section__head { display: flex; justify-content: space-between; align-items: flex-start; }
+.section__title { font-size: 22px; font-weight: 600; color: var(--red-11); line-height: normal; }
+.section__sub { margin-top: 4px; font: 400 13.5px var(--font-body); color: var(--orange-42); }
+.section__link { font-size: 16px; font-weight: 700; color: var(--brand); padding-top: 1px; }
+
+/* Restaurant cards */
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.card { position: relative; background: #fff; border: 1px solid var(--orange-85); border-radius: 14px; overflow: hidden; }
+.card--closed { opacity: .62; }
+.card__media { position: relative; height: 153px; background: linear-gradient(150.2deg, var(--orange-80) 0%, var(--orange-60) 100%); }
+.card__media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.card__media--tint::after { content: ""; position: absolute; inset: 0; background: rgba(89, 26, 17, .2); }
+.card__media > * { z-index: 1; }
+.diet { position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; background: #fff; border: 1px solid var(--chartreuse-38); border-radius: 3px; display: flex; align-items: center; justify-content: center; }
+.diet::before { content: ""; width: 7px; height: 7px; border-radius: 3.5px; background: var(--chartreuse-38); }
+.diet--nonveg { border-color: var(--red-44); }
+.diet--nonveg::before { border-radius: 0; background: var(--red-44); -webkit-mask: url(/assets/nonveg-mask.svg) center/7px 7px no-repeat; mask: url(/assets/nonveg-mask.svg) center/7px 7px no-repeat; }
+.tag { position: absolute; right: 9px; top: 9px; background: var(--red-11); color: var(--orange-56); font: 700 10.5px var(--font-body); padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
+.overlay { position: absolute; inset: 0; background: rgba(43, 27, 20, .55); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12.5px; font-weight: 700; letter-spacing: .375px; text-align: center; }
+.card__body { display: flex; flex-direction: column; gap: 12px; padding: 13px 14px 15px; }
+.card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.card__name { font-size: 18px; font-weight: 700; color: var(--ink); line-height: normal; }
+.rating { display: flex; align-items: center; gap: 3px; background: var(--grey-94); border-radius: 5px; padding: 2px 6px; font: 700 11.5px var(--font-body); color: var(--chartreuse-38); flex-shrink: 0; }
+.rating img { width: 10px; height: 10px; }
+.card__cuisine { font-size: 14px; color: var(--muted); }
+.card__price { font-size: 14px; font-weight: 600; color: var(--orange-12); padding-top: 2px; }
+.card__actions { display: flex; gap: 8px; }
+.btn { flex: 1; height: 40px; border-radius: 8px; font-size: 12.5px; font-weight: 700; font-family: var(--font-head); display: flex; align-items: center; justify-content: center; }
+.btn--solid { background: var(--brand); color: #fff; }
+.btn--outline { border: 1px solid var(--brand); color: var(--brand); }
+
+/* Subscription cards */
+.plans { display: flex; gap: 16px; overflow: auto; padding-bottom: 6px; scrollbar-width: none; }
+.plans::-webkit-scrollbar { display: none; }
+.plan { position: relative; flex: 0 0 304px; width: 304px; background: #fff; border-radius: 24px; padding: 12px; display: flex; flex-direction: column; gap: 16px; filter: drop-shadow(0 12px 16px rgba(0, 0, 0, .06)); }
+.plan__media { position: relative; height: 240px; border-radius: 18px; overflow: hidden; }
+.plan__media > img { width: 100%; height: 100%; object-fit: cover; }
+.plan__badge { position: absolute; left: 12px; top: 12px; background: #ffc90e; backdrop-filter: blur(4px); border-radius: 20px; padding: 6px 10px; font-size: 10px; font-weight: 700; letter-spacing: .2px; color: var(--brand); }
+.plan__fav { position: absolute; right: 19px; top: 19px; width: 36px; height: 36px; }
+.plan__fav img { position: absolute; left: -27.78%; top: -16.67%; width: 155.56%; height: 155.56%; max-width: none; }
+.plan__content { display: flex; flex-direction: column; gap: 16px; }
+.plan__info { display: flex; align-items: baseline; gap: 40px; white-space: nowrap; }
+.plan__name { font-size: 16px; font-weight: 600; }
+.plan__meta { font-size: 12px; color: var(--orange-42); }
+.plan__price { display: flex; align-items: baseline; height: 28px; padding-top: 8px; }
+.plan__amount { font: 700 17px var(--font-body); }
+.plan__unit { font: 500 12px var(--font-body); color: var(--orange-42); margin-left: 0; }
+.plan__old { font-size: 13px; color: var(--orange-65); text-decoration: line-through; margin-left: 6px; }
+.plan__cta { background: var(--brand); color: #fff; border-radius: 14px; padding: 12px; text-align: center; font-size: 16px; font-weight: 600; }
+
+/* Empty state (node 830-6) */
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 573px; max-width: 100%; margin: 0 auto; padding-top: 60px; }
+.empty__art { position: relative; width: 507px; max-width: 100%; height: 293px; overflow: hidden; }
+.empty__art img { position: absolute; left: 0; top: -37.54%; width: 100%; height: 173.04%; max-width: none; }
+.empty__title { margin-top: 4px; width: 100%; text-align: center; font-size: 22px; font-weight: 600; color: var(--red-11); line-height: normal; }
+
+/* Start here tiles section */
+.tilesSection { display: flex; flex-direction: column; gap: 16px; padding: 0 32px; margin-top: 50px; }
+.cards { display: flex; gap: 16px; overflow: auto; padding-bottom: 6px; scrollbar-width: none; }
+.cards::-webkit-scrollbar { display: none; }
+.tile { position: relative; flex: 0 0 364px; width: 364px; height: 372px; border-radius: 16px; overflow: hidden; }
+.tile > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+.tile__badge { position: absolute; left: 12px; top: 12px; background: #ffc90e; backdrop-filter: blur(4px); border-radius: 20px; padding: 6px 10px; font-size: 10px; font-weight: 700; letter-spacing: .2px; color: var(--brand); white-space: nowrap; }
+.tile__card { position: absolute; left: 16px; top: 215px; width: 331px; height: 148px; background: #fff; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; }
+.tile__row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.tile__left { width: 132px; display: flex; flex-direction: column; gap: 6px; }
+.tile__name { font-size: 16px; font-weight: 600; color: var(--orange-12); }
+.tile__about { font-size: 12px; color: var(--orange-42); }
+.tile__right { width: 106px; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.price { display: flex; align-items: center; gap: 2px; }
+.price__amount { font: 700 17px var(--font-body); color: var(--orange-12); }
+.price__unit { font: 500 12px var(--font-body); color: var(--orange-42); }
+.price__old { font-size: 13px; color: var(--orange-65); text-decoration: line-through; white-space: nowrap; margin-left: 4px; }
+.tile__meta { font-size: 12px; color: var(--orange-42); white-space: nowrap; }
+.tile__cta { width: 100%; background: var(--brand); color: #fff; border-radius: 14px; padding: 12px; font-size: 16px; font-weight: 600; text-align: center; border: none; cursor: pointer; }
+.tile__cta:hover { background: var(--red-11); }
+
+/* Footer */
+.footer { margin-top: 126px; background: var(--red-11); padding: 52px 100px 26px; }
+.footer--empty { margin-top: 87px; }
+.footer__grid { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 36px; max-width: 1180px; margin: 0 auto; padding: 0 28px 36px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
+.footer__logo { width: 108px; height: 26px; object-fit: cover; }
+.footer__blurb { margin-top: 13px; max-width: 230px; font-size: 13.5px; line-height: 21.6px; color: var(--orange-69); }
+.footer h6 { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--orange-69); margin-bottom: 14px; }
+.footer ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.footer li { padding: 2px 0 1px; font-size: 14px; color: var(--orange-85-2); }
+.footer__bottom { display: flex; justify-content: space-between; gap: 24px; max-width: 1180px; margin: 0 auto; padding: 22px 28px 0; font: 400 12.5px var(--font-body); color: var(--orange-55); }

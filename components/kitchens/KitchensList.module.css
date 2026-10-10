@@ -1,0 +1,333 @@
+/* ==========================================================
+   Kitchens in Noida listing – Figma node 839-2117
+   ========================================================== */
+
+.page {
+  --red-11: #2e0c09;
+  --red-47: #c0522f;
+  --brand: #591a11;
+  --orange-12: #2b1b14;
+  --orange-42: #7a6a5c;
+  --orange-55: #9c8a7b;
+  --orange-65: #b7a896;
+  --orange-69: #c2af9f;
+  --orange-85: #e9decb;
+  --orange-85-2: #e6d9cc;
+  --green-30: #3c5b43;
+  --grey-90: #f2eada;
+  --grey-94-2: #fbf3e4;
+  --grey-95: #fbf6ec;
+  --font-head: var(--font-plus-jakarta-sans), 'Plus Jakarta Sans', sans-serif;
+  --font-body: var(--font-work-sans), 'Work Sans', sans-serif;
+  --font-ui: var(--font-plus-jakarta-sans), 'Inter', sans-serif;
+
+  max-width: 1512px;
+  margin: 0 auto;
+  background: #fff;
+  font-family: var(--font-head);
+  color: var(--orange-12);
+}
+
+/* Listing main section */
+.main {
+  max-width: 1512px;
+  margin: 0 auto;
+  padding: 16px 32px 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section__head {
+  position: relative;
+  min-height: 82px;
+}
+
+.section__titles {
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--red-11);
+  line-height: normal;
+}
+
+.section__sub {
+  font: 400 13.5px var(--font-body);
+  color: var(--orange-42);
+}
+
+.section__link {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand);
+  line-height: normal;
+  padding-top: 1px;
+}
+
+/* Card rows */
+.cards {
+  display: flex;
+  gap: 16px;
+  overflow: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+}
+
+.cards::-webkit-scrollbar {
+  display: none;
+}
+
+.tile {
+  position: relative;
+  flex: 0 0 364px;
+  width: 364px;
+  height: 372px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.tile > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.tile__badge {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  background: #ffc90e;
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--brand);
+  white-space: nowrap;
+}
+
+.tile__card {
+  position: absolute;
+  left: 16px;
+  top: 215px;
+  width: 331px;
+  height: 148px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.tile__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tile__left {
+  width: 132px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tile__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--orange-12);
+}
+
+.tile__about {
+  font-size: 12px;
+  color: var(--orange-42);
+}
+
+.tile__right {
+  width: 106px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.price__amount {
+  font: 700 17px var(--font-body);
+  color: var(--orange-12);
+}
+
+.price__unit {
+  font: 500 12px var(--font-body);
+  color: var(--orange-42);
+}
+
+.price__old {
+  font-size: 13px;
+  color: var(--orange-65);
+  text-decoration: line-through;
+  white-space: nowrap;
+  margin-left: 4px;
+}
+
+.tile__meta {
+  font-size: 12px;
+  color: var(--orange-42);
+  white-space: nowrap;
+}
+
+.tile__cta {
+  width: 100%;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tile__cta:hover {
+  background: var(--red-11);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px;
+  margin-top: 24px;
+}
+
+.pagination__item {
+  height: 31px;
+  min-width: 31px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #fff;
+  border-radius: 36px;
+  font: 400 14px/20px var(--font-ui);
+  color: #313131;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.pagination__item:hover:not(.pagination__item--active) {
+  background: var(--grey-90);
+  border-color: var(--orange-85);
+}
+
+.pagination__item--control {
+  border-radius: 4px;
+}
+
+.pagination__item--control img {
+  width: 16px;
+  height: 16px;
+}
+
+.pagination__item--active {
+  background: var(--brand);
+  color: #ffc90e;
+  font-weight: 700;
+}
+
+/* Footer */
+.footer {
+  margin-top: 117px;
+  background: var(--red-11);
+  padding: 52px 100px 26px;
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  gap: 36px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px 36px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer__logo {
+  width: 108px;
+  height: 26px;
+  object-fit: cover;
+}
+
+.footer__blurb {
+  margin-top: 13px;
+  max-width: 230px;
+  font-size: 13.5px;
+  line-height: 21.6px;
+  color: var(--orange-69);
+}
+
+.footer h6 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--orange-69);
+  margin-bottom: 14px;
+}
+
+.footer ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.footer li {
+  padding: 2px 0 1px;
+  font-size: 14px;
+  color: var(--orange-85-2);
+}
+
+.footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 22px 28px 0;
+  font: 400 12.5px var(--font-body);
+  color: var(--orange-55);
+}

@@ -1,0 +1,159 @@
+/* ==========================================================
+   Search dropdown – exact styling from Figma (node 214-3653)
+   ========================================================== */
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 680px;
+  padding: 20px 24px 24px;
+  background: #ffffff;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.09);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+/* Trending section */
+.trending {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trendingLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.trendingLabel b {
+  font-weight: 600;
+  color: #2b1b14;
+}
+
+.trendingLabel span {
+  font-weight: 400;
+  color: #c0522f;
+}
+
+.trendingChips {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chip {
+  height: 30px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbf6ec;
+  border: 1px solid #e9decb;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2b1b14;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: #f2eada;
+}
+
+.hr {
+  width: 100%;
+  height: 1px;
+  background: #e9decb;
+  flex-shrink: 0;
+}
+
+/* Recent section */
+.recent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recentHead {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+.recentTitle {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #7a6a5c;
+}
+
+.recentClear {
+  font-size: 16px;
+  font-weight: 700;
+  color: #591a11;
+  text-decoration: underline;
+  text-underline-position: from-font;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.recentGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.recentItem {
+  width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.recentImg {
+  width: 88px;
+  height: 66px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.recentImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.recentLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: #2b1b14;
+  text-align: center;
+  white-space: nowrap;
+}
