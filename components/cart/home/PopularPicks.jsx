@@ -26,9 +26,9 @@ export default function PopularPicks() {
               <h3 className="pick__name">{p.kitchen}</h3>
               <p className="pick__meta">{p.meta}</p>
               <PriceRow price={p.price} oldPrice={p.oldPrice} />
-              <a className="pick__cta" href="#">
+              <Link className="pick__cta" href="/partner-listing">
                 Subscribe
-              </a>
+              </Link>
             </div>
           </article>
         ))}

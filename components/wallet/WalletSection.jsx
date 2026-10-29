@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { getStoredWalletBalance, saveStoredWalletBalance } from "@/lib/wallet";
+import { useAuth } from "@/lib/auth";
 
 const PRESET_AMOUNTS = [
   { value: 500, label: "₹500", bonus: "+₹50" },
@@ -64,12 +66,22 @@ const INITIAL_TRANSACTIONS = [
 ];
 
 export default function WalletSection() {
+  const { user, isLoggedIn } = useAuth();
   const [selectedAmount, setSelectedAmount] = useState(1000);
   const [inputValue, setInputValue] = useState("1,000");
   const [searchFilter, setSearchFilter] = useState("");
   const [balance, setBalance] = useState(350.0);
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [toastMessage, setToastMessage] = useState("");
+
+  useEffect(() => {
+    setBalance(getStoredWalletBalance());
+    const onWalletUpdate = (e) => {
+      if (e.detail?.balance !== undefined) setBalance(e.detail.balance);
+    };
+    window.addEventListener("tiffexx:wallet-updated", onWalletUpdate);
+    return () => window.removeEventListener("tiffexx:wallet-updated", onWalletUpdate);
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -109,7 +121,9 @@ export default function WalletSection() {
     else if (num === 5000) bonus = 1000;
 
     const totalAdded = num + bonus;
-    setBalance((prev) => prev + totalAdded);
+    const newBal = balance + totalAdded;
+    setBalance(newBal);
+    saveStoredWalletBalance(newBal);
 
     const newTx = {
       id: Date.now(),
@@ -145,24 +159,44 @@ export default function WalletSection() {
         </div>
       )}
 
-      <p className="welcome">Welcome back, Aditi</p>
-      <h1 className="title">Your wallet.</h1>
-
-      <div className="layout">
-        {/* Left column */}
-        <section className="left">
-          <div className="balance-card">
-            <img
-              className="balance-card__icon"
-              src="/assets/icon-coin.png"
-              alt="Wallet coin"
-              width="36"
-              height="36"
-            />
-            <p className="balance-card__label">Wallet balance</p>
-            <p className="balance-card__amount">₹{balance.toFixed(2)}</p>
-            <p className="balance-card__name">ADITI M.</p>
+      {!isLoggedIn ? (
+        <div className="notifications-auth-card" style={{ margin: "48px auto 60px" }}>
+          <div className="notifications-auth-icon">
+            <img src="/assets/icon-coin.png" alt="" width="36" height="36" />
           </div>
+          <h2>Sign in to view your Wallet</h2>
+          <p>
+            You need an active account to view your balance, top up your wallet, earn cashback bonuses, and pay for meal orders.
+          </p>
+          <div className="notifications-auth-actions">
+            <Link href="/signin?redirect=/wallet" className="btn-auth-login">
+              Login
+            </Link>
+            <Link href="/signup" className="btn-auth-signup">
+              Sign Up
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="welcome">Welcome back, {user?.name || "Customer"}</p>
+          <h1 className="title">Your wallet.</h1>
+
+          <div className="layout">
+            {/* Left column */}
+            <section className="left">
+              <div className="balance-card">
+                <img
+                  className="balance-card__icon"
+                  src="/assets/icon-coin.png"
+                  alt="Wallet coin"
+                  width="36"
+                  height="36"
+                />
+                <p className="balance-card__label">Wallet balance</p>
+                <p className="balance-card__amount">₹{balance.toFixed(2)}</p>
+                <p className="balance-card__name">{(user?.name || "CUSTOMER").toUpperCase()}</p>
+              </div>
 
           <div className="actions">
             <button
@@ -199,6 +233,12 @@ export default function WalletSection() {
               </span>
               <span className="action__label">Statement</span>
             </button>
+            <Link href="/refer" className="action">
+              <span className="action__circle" style={{ fontSize: "16px" }}>
+                🎁
+              </span>
+              <span className="action__label">Refer &amp; Earn</span>
+            </Link>
           </div>
 
           <div className="topup">
@@ -326,6 +366,8 @@ export default function WalletSection() {
           </div>
         </section>
       </div>
-    </main>
+    </>
+  )}
+</main>
   );
 }

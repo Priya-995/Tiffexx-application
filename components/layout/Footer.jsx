@@ -1,6 +1,8 @@
-export default function Footer() {
+import Link from "next/link";
+
+export default function Footer({ className = "" }) {
   return (
-    <footer className="footer">
+    <footer className={`footer ${className}`.trim()}>
       <div className="footer__top">
         <div className="footer__brand">
           <img src="/assets/logo.png" alt="Tiffexx" width="108" height="26" />
@@ -13,10 +15,10 @@ export default function Footer() {
           <h5>Company</h5>
           <ul>
             <li>
-              <a href="#">About us</a>
+              <Link href="/about">About us</Link>
             </li>
             <li>
-              <a href="#">Blog</a>
+              <Link href="/blog">Blog</Link>
             </li>
             <li>
               <a href="#">Careers</a>
@@ -44,16 +46,16 @@ export default function Footer() {
           <h5>Support</h5>
           <ul>
             <li>
-              <a href="#">FAQ</a>
+              <Link href="/faq">FAQ</Link>
             </li>
             <li>
-              <a href="#">Contact us</a>
+              <Link href="/contact">Contact us</Link>
             </li>
             <li>
-              <a href="#">Privacy policy</a>
+              <Link href="/privacy">Privacy policy</Link>
             </li>
             <li>
-              <a href="#">Terms</a>
+              <Link href="/terms">Terms</Link>
             </li>
           </ul>
         </nav>

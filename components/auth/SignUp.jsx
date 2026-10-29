@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { setStoredUser } from "@/lib/auth";
 
 export default function SignUp() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialRole = searchParams.get("role");
+  const redirectTarget = searchParams.get("redirect") || "/";
 
   const [step, setStep] = useState(initialRole === "customer" ? "customer_form" : "role");
   const [selectedRole, setSelectedRole] = useState(initialRole || null);
@@ -70,9 +72,17 @@ export default function SignUp() {
       return;
     }
 
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
+    setStoredUser({
+      name: fullName,
+      email: email.trim(),
+      phone: "+91 98765 43210",
+      role: "Customer"
+    });
+
     showToast("Account created successfully! Welcome to Tiffexx.");
     setTimeout(() => {
-      router.push("/");
+      router.push(redirectTarget);
     }, 1200);
   };
 
@@ -342,15 +352,9 @@ export default function SignUp() {
               </label>
 
               <div className="forgot">
-                <a
-                  href="#forgot"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    showToast("Password reset link sent to your registered email.");
-                  }}
-                >
+                <Link href="/reset-password">
                   Forgot password?
-                </a>
+                </Link>
               </div>
 
               <button className="submit" type="submit">

@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="LinkedIn logo" clip-path="url(#clip0_0_12)">
+<path id="Vector" d="M20.4 0H3.6C1.61177 0 0 1.61177 0 3.6V20.4C0 22.3882 1.61177 24 3.6 24H20.4C22.3882 24 24 22.3882 24 20.4V3.6C24 1.61177 22.3882 0 20.4 0Z" fill="#0077B5"/>
+<path id="Vector_2" d="M6.65625 8.20151C7.61412 8.20151 8.39062 7.425 8.39062 6.46713C8.39062 5.50926 7.61412 4.73276 6.65625 4.73276C5.69838 4.73276 4.92188 5.50926 4.92188 6.46713C4.92188 7.425 5.69838 8.20151 6.65625 8.20151Z" fill="white"/>
+<g id="Vector_3">
+<path d="M11.4375 9.09375V18.375ZM6.65625 9.09375V18.375Z" fill="white"/>
+<path d="M11.4375 9.09375V18.375M6.65625 9.09375V18.375" stroke="white" stroke-width="3.09375"/>
+</g>
+<path id="Vector_4" d="M12.9375 13.2188C12.9375 12.2812 13.5469 11.3438 14.625 11.3438C15.75 11.3438 16.1719 12.1875 16.1719 13.4531V18.375H19.2656V13.0781C19.2656 10.2188 17.7656 8.90625 15.7031 8.90625C14.1094 8.90625 13.3125 9.79688 12.9375 10.4062" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_0_12">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>

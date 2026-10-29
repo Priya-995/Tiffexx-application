@@ -2,20 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { setStoredUser } from "@/lib/auth";
 
 export default function SignIn() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get("redirect") || "/";
   const [authMode, setAuthMode] = useState("password"); // "password" | "otp"
   const [isSignUp, setIsSignUp] = useState(false);
   
   // Password mode state
-  const [identifier, setIdentifier] = useState("priya9nk@gmail.com");
-  const [password, setPassword] = useState("0000000000");
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
   // OTP mode state
-  const [otpPhone, setOtpPhone] = useState("+91 98765 43210");
+  const [otpPhone, setOtpPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(30);
@@ -78,8 +81,14 @@ export default function SignIn() {
         showToast("Please fill in all registration fields.");
         return;
       }
+      setStoredUser({
+        name: signupName,
+        email: signupEmail,
+        phone: signupPhone,
+        role: "Customer"
+      });
       showToast("Account created successfully! Welcome to Tiffexx.");
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push(redirectTarget), 1200);
       return;
     }
 
@@ -88,8 +97,18 @@ export default function SignIn() {
         showToast("Please enter your email/mobile and password.");
         return;
       }
+      const isEmail = identifier.includes("@");
+      const nameFromId = isEmail
+        ? identifier.split("@")[0].charAt(0).toUpperCase() + identifier.split("@")[0].slice(1)
+        : "Rohit Kumar";
+      setStoredUser({
+        name: nameFromId,
+        email: isEmail ? identifier : "rohit.k@tiffexx.com",
+        phone: isEmail ? "+91 98765 43210" : identifier,
+        role: "Customer"
+      });
       showToast("Signed in successfully! Welcome back.");
-      setTimeout(() => router.push("/"), 1200);
+      setTimeout(() => router.push(redirectTarget), 1200);
     } else {
       if (!otpSent) {
         handleSendOtp();
@@ -100,8 +119,14 @@ export default function SignIn() {
         showToast("Please enter the complete 6-digit OTP.");
         return;
       }
+      setStoredUser({
+        name: "Rohit Kumar",
+        phone: otpPhone || "+91 98765 43210",
+        email: "rohit.k@tiffexx.com",
+        role: "Customer"
+      });
       showToast("OTP verified successfully! Welcome back.");
-      setTimeout(() => router.push("/"), 1200);
+      setTimeout(() => router.push(redirectTarget), 1200);
     }
   };
 
@@ -219,7 +244,7 @@ export default function SignIn() {
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="priya9nk@gmail.com"
+                    placeholder=""
                     required
                   />
                 </div>
@@ -237,15 +262,9 @@ export default function SignIn() {
                 </div>
 
                 <div className="forgot">
-                  <a
-                    href="#forgot"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showToast(`Password reset link sent to ${identifier || "your email"}`);
-                    }}
-                  >
+                  <Link href="/reset-password">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
 
                 <button className="submit" type="submit">

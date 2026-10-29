@@ -61,8 +61,8 @@ export default function SearchResults({ query }) {
                       <p className={s.card__cuisine}>{r.cuisine}</p>
                       <p className={s.card__price}>From ₹{r.price}/meal</p>
                       <div className={s.card__actions}>
-                        <button className={`${s.btn} ${s["btn--solid"]}`}>Order now</button>
-                        <button className={`${s.btn} ${s["btn--outline"]}`}>Subscribe</button>
+                        <Link href="/partner-listing" className={`${s.btn} ${s["btn--solid"]}`}>Order now</Link>
+                        <Link href="/partner-listing" className={`${s.btn} ${s["btn--outline"]}`}>Subscribe</Link>
                       </div>
                     </div>
                   </article>

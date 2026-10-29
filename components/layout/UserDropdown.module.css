@@ -1,0 +1,209 @@
+/* Dropdown popup for user avatar / account button */
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: 260px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 18px 0 14px;
+  z-index: 1000;
+  animation: dropdownIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header buttons row when not logged in */
+.authRow {
+  display: flex;
+  gap: 12px;
+  padding: 0 18px 16px;
+}
+
+.btnLogin {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnLogin:hover {
+  border-color: #000000;
+  background: #fafafa;
+}
+
+.btnSignup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnSignup:hover {
+  background: #222222;
+  border-color: #222222;
+}
+
+/* User profile header when logged in */
+.userHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px 14px;
+}
+
+.userAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 21px;
+  background: #3c5b43;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.userName {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.userEmail {
+  font-size: 12.5px;
+  color: #777777;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* Divider line */
+.divider {
+  height: 1px;
+  background: #f0f0f0;
+  margin: 0 0 8px;
+}
+
+/* Menu items list */
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 22px;
+  color: #111111;
+  font-size: 15.5px;
+  font-weight: 500;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.menuItem:hover {
+  background: #f7f7f7;
+  color: #000000;
+}
+
+.menuIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: #111111;
+}
+
+.menuLabel {
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: normal;
+  color: inherit;
+}
+
+.logoutItem {
+  color: #c0392b;
+  margin-top: 6px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+}
+
+.logoutItem:hover {
+  background: #fef5f4;
+  color: #a93226;
+}
+
+.logoutItem .menuIcon {
+  color: inherit;
+}
+
+.walletBadge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  background: #fbf0dc;
+  color: #7c2d12;
+  padding: 3px 9px;
+  border-radius: 999px;
+  line-height: normal;
+}
+

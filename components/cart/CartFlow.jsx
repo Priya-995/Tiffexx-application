@@ -17,6 +17,7 @@ import {
   ORDERS_STORAGE_KEY,
 } from "@/lib/cart";
 import s from "./CartFlow.module.css";
+import SpinModal from "@/components/playzone/SpinModal";
 
 export default function CartFlow() {
   const [cart, setCart] = useState({
@@ -31,6 +32,7 @@ export default function CartFlow() {
   const [selectedPay, setSelectedPay] = useState(null);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [isMobileEditable, setIsMobileEditable] = useState(false);
+  const [spinModalOpen, setSpinModalOpen] = useState(false);
 
   // Address form fields & errors
   const [firstName, setFirstName] = useState("");
@@ -295,6 +297,11 @@ export default function CartFlow() {
     }
 
     if (view === "payment") {
+      if (!user) {
+        setView("confirm");
+        openAuthModal();
+        return;
+      }
       if (!selectedPay) {
         return addToast("Choose a payment method first.", "error");
       }
@@ -316,13 +323,14 @@ export default function CartFlow() {
           paymentMethod: selectedPay,
         });
         localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(storedOrders));
-      } catch (err) {}
+      } catch (err) { }
 
       const clearedCart = { ...cart, items: [] };
       setCart(clearedCart);
       saveCart(clearedCart);
 
       setView("success");
+      setSpinModalOpen(true);
     }
   };
 
@@ -749,15 +757,32 @@ export default function CartFlow() {
           {view === "success" && (
             <section className={s.view}>
               <div className={s.doneWrap}>
-                <img src="/assets/order-success.svg" alt="Order placed" />
+                <img src="/assets/order-placed.png" alt="Order placed" />
                 <h2>Heya ! your order placed Successfuly.</h2>
-                <button className={s.cta} onClick={() => addToast("Demo — live order tracking opened.", "success")}>
-                  Track your Order
-                </button>
+                <div style={{ display: "flex", gap: "12px", justifyContent: "center", alignItems: "center", flexWrap: "wrap", margin: "16px auto" }}>
+                  <button className={s.cta} onClick={() => addToast("Demo — live order tracking opened.", "success")}>
+                    Track your Order
+                  </button>
+                  <button
+                    className={s.cta}
+                    style={{ background: "#8a5a10" }}
+                    onClick={() => setSpinModalOpen(true)}
+                  >
+                    🎯 Spin &amp; Win Rewards
+                  </button>
+                </div>
                 <a className={s.again} onClick={restartDemoOrder}>
                   Start another demo order
                 </a>
               </div>
+
+              <SpinModal
+                isOpen={spinModalOpen}
+                onClose={() => setSpinModalOpen(false)}
+                onRewardClaimed={(prize) => {
+                  addToast(`Claimed ${prize.title}!`, "success");
+                }}
+              />
             </section>
           )}
         </div>
@@ -995,9 +1020,8 @@ export default function CartFlow() {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`${s.toast} ${t.type === "success" ? s.toastSuccess : ""} ${
-              t.type === "error" ? s.toastError : ""
-            }`}
+            className={`${s.toast} ${t.type === "success" ? s.toastSuccess : ""} ${t.type === "error" ? s.toastError : ""
+              }`}
           >
             {t.msg}
           </div>

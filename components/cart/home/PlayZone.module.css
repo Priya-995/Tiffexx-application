@@ -1,0 +1,300 @@
+.playzone {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.kicker {
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--maroon, #591a11);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--red-11, #2e0c09);
+  line-height: normal;
+}
+
+.subtitle {
+  font-family: var(--font-work), 'Work Sans', sans-serif;
+  font-size: 13.5px;
+  color: var(--sand, #7a6a5c);
+  margin-top: 4px;
+}
+
+.headBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #fef8e6;
+  border: 1px solid #f2eada;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a5a10;
+  white-space: nowrap;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fffdfa 0%, #fbf3e9 50%, #f6ebe0 100%);
+  border: 1px solid var(--orange-88, #e7e3da);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(74, 20, 16, 0.06);
+  padding: 36px 44px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+  gap: 40px;
+  align-items: center;
+}
+
+/* Background ambient light blobs */
+.cardBlob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+}
+
+.cardBlobPink {
+  width: 240px;
+  height: 240px;
+  left: -80px;
+  bottom: -80px;
+  background: #f2a8b8;
+  opacity: 0.35;
+}
+
+.cardBlobLime {
+  width: 200px;
+  height: 200px;
+  right: -50px;
+  top: -50px;
+  background: #d6f25c;
+  opacity: 0.35;
+}
+
+.leftCol {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.streakPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 4px 12px;
+  background: #faeee4;
+  border: 1px solid #ebd9c8;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #a5432b;
+}
+
+.heroHeading {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--red-18, #4a1410);
+  line-height: 1.25;
+}
+
+.heroHeading span {
+  color: #c1592a;
+}
+
+.heroDesc {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--grey-34, #5c5952);
+  max-width: 520px;
+}
+
+.prizesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.prizeItem {
+  background: #ffffff;
+  border: 1px solid var(--orange-88, #e7e3da);
+  border-radius: 14px;
+  padding: 12px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.prizeItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(89, 26, 17, 0.08);
+}
+
+.prizeIcon {
+  font-size: 20px;
+}
+
+.prizeVal {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey-10, #1c1a17);
+}
+
+.prizeLabel {
+  font-size: 11px;
+  color: var(--sand, #7a6a5c);
+  white-space: nowrap;
+}
+
+.actionsRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.spinBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: var(--maroon, #591a11);
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  border: 0;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(89, 26, 17, 0.28);
+  transition: all 0.2s ease;
+}
+
+.spinBtn:hover {
+  background: #45130b;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(89, 26, 17, 0.36);
+}
+
+.spinBtnIcon {
+  font-size: 18px;
+}
+
+.rulesNote {
+  font-size: 12px;
+  color: var(--sand, #7a6a5c);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Recent winners ticker */
+.winnersTicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--orange-88, #e7e3da);
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+
+.tickerIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fbf0dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.tickerText {
+  font-size: 12.5px;
+  color: var(--grey-10, #1c1a17);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tickerHighlight {
+  font-weight: 700;
+  color: var(--maroon, #591a11);
+}
+
+/* Right stage */
+.rightCol {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheelStage {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(251, 240, 220, 0.4) 70%, transparent 100%);
+  padding: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.wheelStage:hover {
+  transform: scale(1.02);
+}
+
+.stageHint {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sand, #7a6a5c);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    grid-template-columns: 1fr;
+    padding: 28px 24px;
+    gap: 32px;
+  }
+  .prizesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

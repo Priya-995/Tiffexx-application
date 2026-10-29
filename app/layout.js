@@ -1,4 +1,4 @@
-import { Plus_Jakarta_Sans, Work_Sans, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Work_Sans, Inter, Fraunces, Figtree } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 
@@ -20,15 +20,28 @@ const inter = Inter({
   display: "swap",
 });
 
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  weight: ["600"],
+  display: "swap",
+});
+
+const figtree = Figtree({
+  subsets: ["latin"],
+  variable: "--font-figtree",
+  display: "swap",
+});
+
 export const metadata = {
   title: "Tiffexx – Food Delivery & Wallet",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${work.variable} ${inter.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${work.variable} ${inter.variable} ${fraunces.variable} ${figtree.variable}`}>
       <body>
-        <Header />
+        
         {children}
       </body>
     </html>

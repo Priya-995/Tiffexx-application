@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SignIn from "@/components/auth/SignIn";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function SignInPage() {
-  return <SignIn />;
+  return (
+    <Suspense fallback={<div className="auth-page" />}>
+      <SignIn />
+    </Suspense>
+  );
 }

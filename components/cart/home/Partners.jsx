@@ -156,12 +156,12 @@ export default function Partners() {
               </p>
               <p className="pcard__price">From ₹{p.price}/meal</p>
               <div className="pcard__actions">
-                <button className="btn btn--solid" type="button">
+                <Link className="btn btn--solid" href="/partner-listing">
                   Order now
-                </button>
-                <button className="btn btn--outline" type="button">
+                </Link>
+                <Link className="btn btn--outline" href="/partner-listing">
                   Subscribe
-                </button>
+                </Link>
               </div>
             </div>
           </article>

@@ -1,0 +1,207 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(89, 26, 17, 0.42);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  position: relative;
+  width: 340px;
+  height: 465.5px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #fffdf9, #fbf3e9);
+  border: 1px solid var(--orange-88, #e7e3da);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(46, 10, 6, 0.25), 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: modalPop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.25);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(92, 89, 82, 0.08);
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-34, #5c5952);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.18s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(89, 26, 17, 0.12);
+  color: var(--maroon, #591a11);
+  transform: rotate(90deg);
+}
+
+.modalBlob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.modalBlobPink {
+  width: 140px;
+  height: 140px;
+  left: -50px;
+  bottom: -50px;
+  background: #f2a8b8;
+  opacity: 0.25;
+}
+
+.modalBlobLime {
+  width: 120px;
+  height: 120px;
+  right: -40px;
+  top: -40px;
+  background: #d6f25c;
+  opacity: 0.35;
+}
+
+.modalKicker {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 28px;
+  text-align: center;
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--red-18, #4a1410);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.wheelArea {
+  position: absolute;
+  left: 50%;
+  top: 60px;
+  margin-left: -115px;
+  width: 230px;
+  height: 230px;
+}
+
+.modalH {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 308px;
+  text-align: center;
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--grey-10, #1c1a17);
+  line-height: normal;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.modalHWin {
+  color: var(--maroon, #591a11);
+  font-weight: 700;
+}
+
+.modalP {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 333px;
+  text-align: center;
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: var(--grey-34, #5c5952);
+  line-height: 18px;
+  white-space: normal;
+}
+
+.modalBtn {
+  position: absolute;
+  left: 55px;
+  top: 388px;
+  width: 219px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  background: var(--maroon, #591a11);
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: normal;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 0;
+  box-shadow: 0 4px 14px rgba(89, 26, 17, 0.28);
+  transition: all 0.2s ease;
+}
+
+.modalBtn:hover:not(:disabled) {
+  background: #47130b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(89, 26, 17, 0.35);
+}
+
+.modalBtn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.claimBtn {
+  background: #3c5b43;
+  box-shadow: 0 4px 14px rgba(60, 91, 67, 0.28);
+}
+
+.claimBtn:hover:not(:disabled) {
+  background: #2f4834;
+}
+
+.couponTag {
+  display: inline-block;
+  background: #fbf0dc;
+  color: #8a5a10;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  font-size: 11px;
+  border: 1px dashed #c2af9f;
+}

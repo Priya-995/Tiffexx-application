@@ -55,7 +55,7 @@ export default function KitchensList() {
                       <span className={s.tile__meta}>{k.meta}</span>
                     </div>
                   </div>
-                  <button type="button" className={s.tile__cta}>Explore Menu</button>
+                  <Link href="/partner-listing" className={s.tile__cta}>Explore Menu</Link>
                 </div>
               </article>
             ))}
@@ -82,7 +82,7 @@ export default function KitchensList() {
                       <span className={s.tile__meta}>{k.meta}</span>
                     </div>
                   </div>
-                  <button type="button" className={s.tile__cta}>Explore Menu</button>
+                  <Link href="/partner-listing" className={s.tile__cta}>Explore Menu</Link>
                 </div>
               </article>
             ))}
@@ -109,7 +109,7 @@ export default function KitchensList() {
                       <span className={s.tile__meta}>{k.meta}</span>
                     </div>
                   </div>
-                  <button type="button" className={s.tile__cta}>Explore Menu</button>
+                  <Link href="/partner-listing" className={s.tile__cta}>Explore Menu</Link>
                 </div>
               </article>
             ))}

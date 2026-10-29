@@ -1,0 +1,436 @@
+.main {
+  position: relative;
+  width: 100%;
+  max-width: 1512px;
+  min-height: 884px;
+  margin: 0 auto;
+}
+
+.wrap {
+  padding: 33px 45px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hdTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hd h1 {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--grey-10, #1c1a17);
+  line-height: normal;
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+.hd p {
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--grey-34, #5c5952);
+  line-height: normal;
+}
+
+.spinPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: #fef8e6;
+  border: 1px solid #e9decb;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8a5a10;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.spinPill:hover {
+  background: #fbf0dc;
+  transform: translateY(-1px);
+}
+
+/* Spin & Win Banner */
+.spinBanner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, #fffdf9 0%, #fbf3e9 60%, #faeee4 100%);
+  border: 1px solid var(--orange-88, #e7e3da);
+  border-radius: 18px;
+  padding: 22px 30px;
+  box-shadow: 0 4px 16px rgba(74, 20, 16, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.spinBannerBlob {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background: #f2a8b8;
+  opacity: 0.22;
+  border-radius: 50%;
+  left: -40px;
+  bottom: -40px;
+  pointer-events: none;
+}
+
+.spinBannerBlobLime {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  background: #d6f25c;
+  opacity: 0.28;
+  border-radius: 50%;
+  right: -20px;
+  top: -20px;
+  pointer-events: none;
+}
+
+.spinBannerLeft {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spinBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #fef8e6;
+  border: 1px solid #f2eada;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a5a10;
+  align-self: flex-start;
+  letter-spacing: 0.5px;
+}
+
+.spinTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--red-18, #4a1410);
+  line-height: normal;
+}
+
+.spinDesc {
+  font-size: 13.5px;
+  color: var(--grey-34, #5c5952);
+  line-height: 1.45;
+  max-width: 560px;
+}
+
+.spinBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--maroon, #591a11);
+  color: #ffffff;
+  border: 0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  box-shadow: 0 4px 14px rgba(89, 26, 17, 0.25);
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.spinBtn:hover {
+  background: #47130b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(89, 26, 17, 0.32);
+}
+
+.spinBannerRight {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.miniWheelStage {
+  width: 170px;
+  height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.74);
+  transform-origin: center center;
+  transition: transform 0.25s ease;
+}
+
+.miniWheelStage:hover {
+  transform: scale(0.78);
+}
+
+.tapHint {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sand, #7a6a5c);
+  margin-top: -12px;
+}
+
+.contests {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.contests h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #4a4848;
+  line-height: normal;
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: 134px 134px;
+  gap: 16px;
+  height: auto;
+  min-height: 365px;
+}
+
+.ticket {
+  position: relative;
+  display: grid;
+  height: 120.09px;
+  overflow: hidden;
+  border-radius: 8.8px;
+  box-shadow: 0 9.9px 19.8px rgba(28, 26, 23, 0.16);
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.ticket:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(28, 26, 23, 0.22);
+}
+
+.ticketFirst {
+  width: 340px;
+  height: 121.23px;
+  justify-self: start;
+  border-radius: 8.9px;
+}
+
+.ticketDark {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr) 33px;
+  background: linear-gradient(155deg, #4a1410 0%, #3a0f0c 100%);
+}
+
+.ticketLight {
+  grid-template-columns: 33px minmax(0, 1.8fr) minmax(0, 1.2fr);
+  background: linear-gradient(155deg, #d8be9e 0%, #c9a987 100%);
+  color: #3a0f0c;
+}
+
+/* Authentic punch notches */
+.notch {
+  position: absolute;
+  width: 14.4px;
+  height: 14.4px;
+  border-radius: 50%;
+  background: #eaefe9;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.tl { left: -7.2px; top: -7.2px; }
+.bl { left: -7.2px; bottom: -7.4px; }
+.br { right: -7.2px; bottom: -7.4px; }
+.tr { right: -7.2px; top: -7.2px; }
+
+.ticketIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.ticketIcon img {
+  width: 66.58px;
+  height: 66.58px;
+  object-fit: cover;
+  user-select: none;
+}
+
+.ticketBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12.1px 9.9px 12.1px 14.3px;
+}
+
+.ticketDark .ticketBody {
+  border-left: 1.1px dashed rgba(255, 255, 255, 0.4);
+}
+
+.ticketStrip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5.5px 0;
+}
+
+.ticketLight .ticketStrip {
+  border-right: 1.1px dashed rgba(58, 15, 12, 0.28);
+}
+
+.ticketStrip span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 5.5px;
+  font-weight: 600;
+  letter-spacing: 0.28px;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+.ticketLight .ticketBody .notch {
+  display: none;
+}
+
+.tKicker {
+  padding-bottom: 1.1px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.83px;
+  opacity: 0.85;
+  line-height: normal;
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+.tTitle {
+  padding-bottom: 5.5px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: normal;
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+.tDesc {
+  height: 27.8px;
+  position: relative;
+  width: 127px;
+}
+
+.tDesc p {
+  position: absolute;
+  left: 0;
+  top: -0.5px;
+  width: 168px;
+  font-size: 10px;
+  line-height: 9.48px;
+  opacity: 0.8;
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+.tDesc p.small {
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-size: 6.38px;
+  line-height: 9.57px;
+  width: 127.6px;
+  white-space: nowrap;
+}
+
+.tBig {
+  padding-bottom: 7.7px;
+  font-size: 18.7px;
+  font-weight: 600;
+  line-height: normal;
+  font-family: var(--font-fraunces), 'Fraunces', serif;
+}
+
+.tBigSans {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tPad {
+  height: 7px;
+}
+
+/* Toast */
+.copiedToast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1a17;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  animation: toastFade 0.25s ease-out;
+}
+
+@keyframes toastFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (max-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+  .ticketFirst {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrap {
+    padding: 24px 16px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
