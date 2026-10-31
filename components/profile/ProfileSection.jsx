@@ -2,32 +2,41 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import s from "./ProfileSection.module.css";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-
-const CALENDAR_DAYS = [
-  { date: "05 Jul", count: "2 orders", empty: false },
-  { date: "06 Jul", count: "0 orders", empty: true },
-  { date: "07 Jul", count: "1 order", empty: false },
-  { date: "08 Jul", count: "1 order", empty: false },
-  { date: "09 Jul", count: "1 order", empty: false },
-  { date: "10 Jul", count: "1 order", empty: false },
-  { date: "11 Jul", count: "1 order", empty: false },
-  { date: "12 Jul", count: "1 order", empty: false },
-  { date: "13 Jul", count: "3 orders", empty: false, sm: true },
-  { date: "14 Jul", count: "3 orders", empty: false, sm: true },
-  { date: "15 Jul", count: "3 orders", empty: false, sm: true },
-  { date: "16 Jul", count: "3 orders", empty: false, sm: true },
-  { date: "17 Jul", count: "3 orders", empty: false, sm: true },
-  { date: "18 Jul", count: "3 orders", empty: false, sm: true },
-];
+import ProfileLayout from "./ProfileLayout";
+import s from "./ProfileSection.module.css";
 
 export default function ProfileSection() {
-  const { user, isLoggedIn } = useAuth();
-  const [activeTab, setActiveTab] = useState("Overview");
-  const [activePrefTab, setActivePrefTab] = useState("Personal Information");
-  const [vegOnly, setVegOnly] = useState(true);
-  const [basicOpen, setBasicOpen] = useState(true);
+  const router = useRouter();
+  const { user, isLoggedIn, logout } = useAuth();
+
+  // User Profile Data & Edit States
+  const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: user?.name || "Ananya Rao",
+    email: user?.email || "ananya.rao@example.com",
+    phone: user?.phone || "+91 98XXX XXX10",
+    dob: "14 July 1994",
+    gender: "Female",
+    password: "••••••••••",
+  });
+
+  // Edit form buffer
+  const [editForm, setEditForm] = useState({ ...profileData });
+
+  // Preferences States
+  const [prefs, setPrefs] = useState({
+    whatsapp: true,
+    emailOffers: false,
+    savePayment: true,
+  });
+
+  // Linked Accounts
+  const [googleConnected, setGoogleConnected] = useState(true);
+  const [appleConnected, setAppleConnected] = useState(false);
+
+  // Toast feedback
   const [toastMessage, setToastMessage] = useState("");
 
   const showToast = (msg) => {
@@ -35,346 +44,346 @@ export default function ProfileSection() {
     setTimeout(() => setToastMessage(""), 3000);
   };
 
-  if (!isLoggedIn) {
-    return (
-      <div className={s.page}>
-        <main className={s.content}>
-          <div className="notifications-auth-card" style={{ margin: "60px auto" }}>
-            <div className="notifications-auth-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#52110c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <h2>Sign in to view your Profile</h2>
-            <p>
-              Please sign in or create an account to access your meal subscriptions, delivery preferences, addresses, and wallet.
-            </p>
-            <div className="notifications-auth-actions">
-              <Link href="/signin?redirect=/profile" className="btn-auth-login">
-                Login
-              </Link>
-              <Link href="/signup" className="btn-auth-signup">
-                Sign Up
-              </Link>
-            </div>
-          </div>
-        </main>
-        {toastMessage && <div className={s.toast}>{toastMessage}</div>}
-      </div>
-    );
-  }
+  const getInitials = (name) => {
+    if (!name) return "AR";
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
 
-  const displayName = user?.name || "Priya Sharma";
-  const displayEmail = user?.email || "priya@gmail.com";
-  const displayInitial = displayName ? displayName[0].toUpperCase() : "P";
+  const handleSaveProfile = (e) => {
+    e.preventDefault();
+    setProfileData({ ...editForm });
+    setIsEditing(false);
+    showToast("✓ Profile information updated successfully!");
+  };
+
+  const handleSignOut = () => {
+    if (logout) logout();
+    showToast("Signed out successfully");
+    setTimeout(() => {
+      router.push("/signin");
+    }, 600);
+  };
+
+  const handleDeleteAccount = () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete your Tiffexx account? This action cannot be undone.");
+    if (confirmDelete) {
+      if (logout) logout();
+      showToast("Your account has been deleted");
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
+    }
+  };
+
+  const currentInitials = getInitials(profileData.name);
 
   return (
-    <div className={s.page}>
-      <main className={s.content}>
-        {/* Page Heading */}
-        <div className={s.heading}>
-          <h1 className={s.heading__title}>Profile</h1>
-          <p className={s.heading__sub}>
-            Manage your account, subscription preferences, and delivery details in one place.
-          </p>
-        </div>
+    <ProfileLayout>
+      {/* Main content */}
+      <div className={s.main}>
+        <header className={s.main__header}>
+          <button
+            type="button"
+            className={s.back}
+            aria-label="Go back"
+            onClick={() => {
+              if (window.history.length > 1) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
+          >
+            <img src="/assets/back.svg" width="24" height="24" alt="" />
+          </button>
+          <h1 className={s.main__title}>MY PROFILE</h1>
+        </header>
 
-        {/* Top Navigation Tabs */}
-        <nav className={s.tabs} aria-label="Profile navigation">
-          {["Overview", "Orders", "Subscriptions", "Wallet"].map((tab) => (
+        {/* Profile summary */}
+        <section className={s.summary} aria-label="Profile summary">
+          <div className={s.summary__who}>
+            <div className={`${s.avatar} ${s["avatar--lg"]}`} aria-hidden="true">
+              {currentInitials}
+            </div>
+            <div className={s.summary__text}>
+              <p className={s.summary__welcome}>Welcome back</p>
+              <p className={s.summary__name}>{profileData.name}</p>
+              <p className={s.summary__since}>Member since March 2024</p>
+            </div>
+          </div>
+          <dl className={s.stats}>
+            <div className={s.stat}>
+              <dt className={s.stat__label}>Orders</dt>
+              <dd className={s.stat__value}>12</dd>
+            </div>
+            <div className={s.stat}>
+              <dt className={s.stat__label}>Coupons</dt>
+              <dd className={s.stat__value}>3</dd>
+            </div>
+            <div className={s.stat}>
+              <dt className={s.stat__label}>Wallet</dt>
+              <dd className={s.stat__value}>₹25</dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* Personal information */}
+        <section className={s.card}>
+          <div className={s.card__head}>
+            <h2 className={s.card__title}>Personal Information</h2>
             <button
-              key={tab}
               type="button"
-              className={`${s.tab} ${activeTab === tab ? s["tab--active"] : ""}`}
+              className={`${s.btn} ${s["btn--outline"]}`}
               onClick={() => {
-                setActiveTab(tab);
-                if (tab === "Wallet") showToast("Showing wallet balance and transactions");
-                if (tab === "Subscriptions") showToast("Showing active subscriptions");
-                if (tab === "Orders") showToast("Showing recent order history");
+                setEditForm({ ...profileData });
+                setIsEditing(!isEditing);
               }}
             >
-              {activeTab === tab && <span className={s.tab__dot} />}
-              <p>{tab}</p>
+              {isEditing ? "Cancel" : "Edit Profile"}
             </button>
-          ))}
-        </nav>
-
-        {/* Wallet view inside My Account */}
-        {activeTab === "Wallet" && (
-          <div style={{ background: "#fff", border: "1px solid #ece6dc", borderRadius: 16, padding: "24px 28px", marginBottom: 24, boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-              <div>
-                <p style={{ fontSize: 13, color: "#7a6a5c", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Tiffexx Wallet Balance</p>
-                <p style={{ fontSize: 32, fontWeight: 700, color: "#1c1a17", margin: "4px 0" }}>₹25.00</p>
-                <p style={{ fontSize: 13.5, color: "#2f6b3a", fontWeight: 500 }}>Active balance · automatically applied at checkout</p>
-              </div>
-              <Link href="/wallet" style={{ background: "#52110c", color: "#fff", padding: "11px 24px", borderRadius: 999, textDecoration: "none", fontWeight: 600, fontSize: 14 }}>
-                Manage / Top-up Wallet →
-              </Link>
-            </div>
           </div>
-        )}
+          <hr className={s.divider} />
 
-        {/* Subscriptions view inside My Account */}
-        {activeTab === "Subscriptions" && (
-          <div style={{ background: "#fff", border: "1px solid #ece6dc", borderRadius: 16, padding: "24px 28px", marginBottom: 24, boxShadow: "0 4px 16px rgba(0,0,0,0.03)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-              <div>
-                <p style={{ fontSize: 13, color: "#7a6a5c", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Active Subscription</p>
-                <p style={{ fontSize: 24, fontWeight: 700, color: "#1c1a17", margin: "4px 0" }}>Lunch plan — weekdays · ₹1,200/mo</p>
-                <p style={{ fontSize: 13.5, color: "#2f6b3a", fontWeight: 500 }}>Active · Next delivery tomorrow, 1:00 P.M. from Amma&apos;s Kitchen</p>
-              </div>
-              <Link href="/subscriptions" style={{ background: "#52110c", color: "#fff", padding: "11px 24px", borderRadius: 999, textDecoration: "none", fontWeight: 600, fontSize: 14 }}>
-                Manage Subscription Details →
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* Overview Card */}
-        <section className={s.overview}>
-          <div className={s.overview__top}>
-            <div className={s.summary}>
-              <div className={s.summary__avatar}>
-                <span>{displayInitial}</span>
-              </div>
-              <div className={s.identity}>
-                <div className={s.identity__name_row}>
-                  <p className={s.identity__name}>{displayName}</p>
-                  <p className={s.identity__email}>{displayEmail}</p>
+          {isEditing ? (
+            <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: "var(--ink-3)", display: "block", marginBottom: 4 }}>Full name</label>
+                  <input
+                    type="text"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    required
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid var(--sand-85)", font: "inherit" }}
+                  />
                 </div>
-                <p className={s.identity__role}>Weekday lunch subscriber</p>
-                <div className={s.rating}>
-                  <span className={s.rating__score}>4.9</span>
-                  <span className={s.rating__muted}>(32 orders rated)</span>
-                  <span className={s.rating__dot} />
-                  <span className={s.rating__muted}>2.3km from Amma&apos;s Kitchen</span>
+                <div>
+                  <label style={{ fontSize: 12, color: "var(--ink-3)", display: "block", marginBottom: 4 }}>Email address</label>
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    required
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid var(--sand-85)", font: "inherit" }}
+                  />
                 </div>
-                <div className={s.manage}>
-                  <span className={s.manage__icon}>▤</span>
-                  <Link className={s.manage__link} href="/partner-listing">
-                    Manage subscription
-                  </Link>
+                <div>
+                  <label style={{ fontSize: 12, color: "var(--ink-3)", display: "block", marginBottom: 4 }}>Mobile number</label>
+                  <input
+                    type="tel"
+                    value={editForm.phone}
+                    onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    required
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid var(--sand-85)", font: "inherit" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: "var(--ink-3)", display: "block", marginBottom: 4 }}>Date of birth</label>
+                  <input
+                    type="text"
+                    value={editForm.dob}
+                    onChange={(e) => setEditForm({ ...editForm, dob: e.target.value })}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid var(--sand-85)", font: "inherit" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: "var(--ink-3)", display: "block", marginBottom: 4 }}>Gender</label>
+                  <select
+                    value={editForm.gender}
+                    onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid var(--sand-85)", font: "inherit", background: "#fff" }}
+                  >
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </div>
               </div>
-            </div>
+              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                <button
+                  type="submit"
+                  style={{
+                    padding: "10px 24px",
+                    background: "var(--maroon)",
+                    color: "#fff",
+                    borderRadius: 8,
+                    border: 0,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  style={{
+                    padding: "10px 18px",
+                    background: "transparent",
+                    color: "var(--ink-3)",
+                    borderRadius: 8,
+                    border: "1px solid var(--sand-85)",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <dl className={s.fields}>
+              <div className={`${s.field} ${s["field--grow"]}`}>
+                <dt>Full name</dt>
+                <dd>{profileData.name}</dd>
+              </div>
+              <div className={`${s.field} ${s["field--email"]}`}>
+                <dt>Email address</dt>
+                <dd className={s.jakarta}>{profileData.email}</dd>
+              </div>
+              <div className={`${s.field} ${s["field--mobile"]}`}>
+                <dt>Mobile number</dt>
+                <dd className={s.jakarta}>{profileData.phone} · Verified</dd>
+              </div>
+              <div className={`${s.field} ${s["field--grow"]}`}>
+                <dt>Date of birth</dt>
+                <dd>{profileData.dob}</dd>
+              </div>
+              <div className={`${s.field} ${s["field--grow"]}`}>
+                <dt>Gender</dt>
+                <dd>{profileData.gender}</dd>
+              </div>
+              <div className={`${s.field} ${s["field--grow"]}`}>
+                <dt>Password</dt>
+                <dd>{profileData.password}</dd>
+              </div>
+            </dl>
+          )}
+        </section>
 
-            {/* Location Pill */}
-            <Link className={s.location} href="/locations">
-              <div className={s.location__text}>
-                <span className={s.location__pin}>📍</span>
-                <span className={s.location__name}>Sector 63, Noida</span>
-              </div>
-              <div className={s.location__go}>
-                <span className={s.location__arrow}>→</span>
-              </div>
-            </Link>
+        {/* Saved addresses */}
+        <section className={s.card} id="addresses-card">
+          <div className={s.card__head}>
+            <h2 className={`${s.card__title} ${s["card__title--jakarta"]}`}>Saved Addresses</h2>
+            <button
+              type="button"
+              className={s["link-small"]}
+              style={{ background: "none", border: 0, padding: 0 }}
+              onClick={() => showToast("Opening address manager")}
+            >
+              Manage addresses ›
+            </button>
           </div>
-
-          {/* Calendar Delivery Grid (14 days, clean grid, NO scroller) */}
-          <div className={s.calendar}>
-            {CALENDAR_DAYS.map((d, i) => (
-              <div
-                key={i}
-                className={`${s.day} ${d.empty ? s["day--empty"] : ""}`}
-                role="button"
-                tabIndex={0}
-                onClick={() =>
-                  showToast(`${d.date}: ${d.count} delivered to Sector 63, Noida`)
-                }
-              >
-                <p className={`${s.day__date} ${d.sm ? s["day__date--sm"] : ""}`}>
-                  {d.date}
-                </p>
-                <p className={s.day__count}>{d.count}</p>
-              </div>
-            ))}
+          <hr className={s.divider} />
+          <div className={s.addresses}>
+            <article className={s.address}>
+              <h3 className={s.address__label}>Home</h3>
+              <p className={s.address__text}>Flat 4B, Sunrise Apartments, Sector 50, Noida – 201301</p>
+              <span className={s.badge}>Default</span>
+            </article>
+            <article className={s.address}>
+              <h3 className={s.address__label}>Work</h3>
+              <p className={s.address__text}>
+                H-Block, Sector - 63, Noida – 201307
+              </p>
+            </article>
           </div>
         </section>
 
-        {/* Details Section (Sidebar + Main Column) */}
-        <section className={s.details}>
-          {/* Sidebar */}
-          <aside className={s.sidebar}>
-            {/* Member Since Card */}
-            <div className={`${s.card} ${s["card--lg"]} ${s.member}`}>
-              <div className={s.member__text}>
-                <p className={s.member__title}>Member Since</p>
-                <p className={s.member__sub}>2 years with Tiffexx</p>
-              </div>
-              <div className={s.member__actions}>
-                <button
-                  type="button"
-                  className={`${s.circle} ${s["circle--light"]}`}
-                  aria-label="Edit Profile"
-                  onClick={() => showToast("Profile edit dialog coming soon!")}
-                >
-                  <img className={s["icon-13"]} src="/assets/icons/pencil.svg" alt="" />
-                </button>
-                <div className={`${s.circle} ${s["circle--dark"]}`}>✦</div>
-              </div>
-            </div>
+        {/* Preferences */}
+        <section className={`${s.card} ${s["card--prefs"]}`}>
+          <h2 className={`${s.card__title} ${s["card__title--jakarta"]} ${s.prefs__title}`}>Preferences</h2>
+          <hr className={s.divider} />
+          <label className={s.pref}>
+            <span>Order updates on WhatsApp and SMS</span>
+            <input
+              type="checkbox"
+              checked={prefs.whatsapp}
+              onChange={(e) => {
+                setPrefs({ ...prefs, whatsapp: e.target.checked });
+                showToast(e.target.checked ? "✓ WhatsApp updates enabled" : "WhatsApp updates disabled");
+              }}
+            />
+          </label>
+          <label className={s.pref}>
+            <span>Offers and coupons by email</span>
+            <input
+              type="checkbox"
+              checked={prefs.emailOffers}
+              onChange={(e) => {
+                setPrefs({ ...prefs, emailOffers: e.target.checked });
+                showToast(e.target.checked ? "✓ Email offers enabled" : "Email offers disabled");
+              }}
+            />
+          </label>
+          <label className={s.pref}>
+            <span>Save my payment preference for faster checkout</span>
+            <input
+              type="checkbox"
+              checked={prefs.savePayment}
+              onChange={(e) => {
+                setPrefs({ ...prefs, savePayment: e.target.checked });
+                showToast(e.target.checked ? "✓ Payment preference saved" : "Payment preference removed");
+              }}
+            />
+          </label>
+        </section>
 
-            {/* Basic Information Card */}
-            <div className={`${s.card} ${s["card--sm"]} ${s.basic}`}>
-              <div
-                className={s.basic__head}
-                role="button"
-                tabIndex={0}
-                onClick={() => setBasicOpen(!basicOpen)}
-                style={{ cursor: "pointer" }}
-              >
-                <p className={s.basic__title}>Basic Information</p>
-                <img
-                  className={s["icon-24"]}
-                  src="/assets/icons/chevron-down.svg"
-                  alt=""
-                  style={{
-                    transform: basicOpen ? "rotate(0deg)" : "rotate(-90deg)",
-                    transition: "transform 0.2s ease",
-                  }}
-                />
-              </div>
-
-              {basicOpen && (
-                <>
-                  <div className={s.basic__score}>
-                    <p className={s.basic__score_label}>Loyalty Score</p>
-                    <p className={s.basic__score_value}>96%</p>
-                  </div>
-
-                  <div className={s.metric}>
-                    <div className={s.metric__row}>
-                      <p>Order frequency</p>
-                      <p>+11%</p>
-                    </div>
-                    <div className={s.bar}>
-                      <div
-                        className={s.bar__fill}
-                        style={{ width: "70%", background: "#ffc90e" }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={s.metric}>
-                    <div className={s.metric__row}>
-                      <p>On-time payments</p>
-                      <p>+8%</p>
-                    </div>
-                    <div className={s.bar}>
-                      <div
-                        className={s.bar__fill}
-                        style={{ width: "88%", background: "#591a11" }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={s.metric}>
-                    <div className={s.metric__row}>
-                      <p>Referrals</p>
-                      <p>+10%</p>
-                    </div>
-                    <div className={s.bar}>
-                      <div
-                        className={s.bar__fill}
-                        style={{ width: "40%", background: "#fe5b31" }}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </aside>
-
-          {/* Main Column */}
-          <div className={s.main}>
-            {/* Preferences Header Tabs + Veg Toggle */}
-            <div className={s.prefs_head}>
-              <div className={s.prefs_head__tabs}>
-                <button
-                  type="button"
-                  className={`${s.ptab} ${activePrefTab === "Personal Information" ? s["ptab--active"] : ""}`}
-                  onClick={() => setActivePrefTab("Personal Information")}
-                >
-                  <p>Personal Information</p>
-                </button>
-                <button
-                  type="button"
-                  className={`${s.ptab} ${activePrefTab === "Preferences" ? s["ptab--active"] : ""}`}
-                  onClick={() => setActivePrefTab("Preferences")}
-                >
-                  <p>Preferences</p>
-                  <span className={s.ptab__badge}>2</span>
-                </button>
-              </div>
-
-              <div
-                className={s.veg}
-                role="button"
-                tabIndex={0}
+        {/* Linked accounts + contact */}
+        <div className={s.bottom}>
+          <section className={`${s.card} ${s["card--compact"]}`}>
+            <h2 className={s.card__subtitle}>Linked Accounts</h2>
+            <div className={s.linked}>
+              <span>Google</span>
+              <button
+                type="button"
+                className={`${s.btn} ${s["btn--text"]}`}
                 onClick={() => {
-                  setVegOnly(!vegOnly);
-                  showToast(vegOnly ? "Veg mode turned off" : "Veg mode turned on");
+                  setGoogleConnected(!googleConnected);
+                  showToast(!googleConnected ? "Google account connected" : "Google account disconnected");
                 }}
               >
-                <span className={s.veg__label}>Veg</span>
-                <div
-                  className={`${s.switch} ${vegOnly ? s["switch--on"] : s["switch--off"]}`}
-                >
-                  <span className={s.switch__knob} />
-                </div>
-              </div>
+                {googleConnected ? "Disconnect" : "Connect"}
+              </button>
             </div>
+            <div className={s.linked}>
+              <span>Apple</span>
+              <button
+                type="button"
+                className={`${s.btn} ${s["btn--text"]}`}
+                onClick={() => {
+                  setAppleConnected(!appleConnected);
+                  showToast(!appleConnected ? "Apple account connected" : "Apple account disconnected");
+                }}
+              >
+                {appleConnected ? "Disconnect" : "Connect"}
+              </button>
+            </div>
+          </section>
 
-            {/* Plan 1: Lunch plan */}
-            <article className={`${s.card} ${s["card--sm"]} ${s.plan} ${s["plan--lunch"]}`}>
-              <div className={s.plan__icon}>
-                <img className={`${s["icon-24"]} ${s.cover}`} src="/assets/tiffin.png" alt="" />
-              </div>
-              <div className={s.plan__body}>
-                <p className={s.plan__title}>Lunch plan</p>
-                <p className={s.plan__sub}>Amma&apos;s Kitchen</p>
-                <p className={s.plan__desc}>
-                  Weekday lunch subscription, 5 meals a week. Delivered fresh between 12:30–1:30 PM
-                  to your Koramangala address, with same-day swaps available before 10 AM.
-                </p>
-              </div>
-            </article>
+          <section className={`${s.card} ${s["card--compact"]} ${s["card--contact"]}`}>
+            <h2 className={s.card__subtitle}>Contact Us</h2>
+            <div className={s["contact-links"]}>
+              <Link href="/terms">TERMS &amp; CONDITIONS</Link>
+              <Link href="/faq">FAQ</Link>
+              <Link href="/contact">HELP &amp; SUPPORT</Link>
+            </div>
+            <button
+              type="button"
+              className={`${s.btn} ${s["btn--danger"]}`}
+              onClick={handleDeleteAccount}
+            >
+              Delete My Account
+            </button>
+          </section>
+        </div>
+      </div>
 
-            {/* Plan 2: Dinner, occasional */}
-            <article className={`${s.card} ${s["card--sm"]} ${s.plan}`}>
-              <div className={s.plan__icon}>
-                <img className={`${s["icon-24"]} ${s.cover}`} src="/assets/tiffin.png" alt="" />
-              </div>
-              <div className={s.plan__body}>
-                <p className={s.plan__title}>Dinner, occasional</p>
-                <p className={s.plan__sub}>Meena&apos;s Tiffin</p>
-                <p className={s.plan__desc}>
-                  On-demand dinner orders placed a few times a month, mostly thalis and regional
-                  specials. No active subscription, paid from wallet balance each time.
-                </p>
-              </div>
-            </article>
-
-            {/* Plan 3: Delivery preference */}
-            <article className={`${s.card} ${s["card--sm"]} ${s.plan}`}>
-              <div className={`${s.plan__icon} ${s["plan__icon--emoji"]}`}>📍</div>
-              <div className={s.plan__body}>
-                <p className={s.plan__title}>Delivery preference</p>
-                <p className={s.plan__sub}>Home — Koramangala, Bengaluru</p>
-                <p className={s.plan__desc}>
-                  Default drop-off is the building lobby, contactless. Backup address saved for the
-                  Whitefield office on weekdays.
-                </p>
-              </div>
-            </article>
-          </div>
-        </section>
-      </main>
-
-      {/* Floating Notification Toast */}
+      {/* Interactive feedback toast */}
       {toastMessage && <div className={s.toast}>{toastMessage}</div>}
-    </div>
+    </ProfileLayout>
   );
 }

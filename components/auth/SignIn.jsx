@@ -5,12 +5,23 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setStoredUser } from "@/lib/auth";
 
-export default function SignIn() {
+export default function SignIn({ initialMode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTarget = searchParams.get("redirect") || "/";
+  const modeParam = searchParams.get("mode");
   const [authMode, setAuthMode] = useState("password"); // "password" | "otp"
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(
+    initialMode === "signup" || modeParam === "signup"
+  );
+
+  useEffect(() => {
+    if (initialMode === "signup" || searchParams.get("mode") === "signup") {
+      setIsSignUp(true);
+    } else if (initialMode === "signin" || searchParams.get("mode") === "signin") {
+      setIsSignUp(false);
+    }
+  }, [initialMode, searchParams]);
   
   // Password mode state
   const [identifier, setIdentifier] = useState("");
@@ -156,9 +167,13 @@ export default function SignIn() {
                 <a href="#help" onClick={(e) => { e.preventDefault(); showToast("Customer support: support@tiffexx.com"); }}>Help</a>
               </li>
             </ul>
-            <Link className="hero__signup" href="/signup">
-              Sign Up
-            </Link>
+            <button
+              type="button"
+              className="hero__signup"
+              onClick={() => setIsSignUp((prev) => !prev)}
+            >
+              {isSignUp ? "Sign In" : "Sign Up"}
+            </button>
           </div>
 
           <div className="hero__art">
@@ -400,8 +415,29 @@ export default function SignIn() {
             )}
 
             <p className="switch">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup">Sign Up</Link>
+              {isSignUp ? (
+                <>
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    className="switch-link"
+                    onClick={() => setIsSignUp(false)}
+                  >
+                    Sign In
+                  </button>
+                </>
+              ) : (
+                <>
+                  Don&apos;t have an account?{" "}
+                  <button
+                    type="button"
+                    className="switch-link"
+                    onClick={() => setIsSignUp(true)}
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </p>
           </form>
         </section>

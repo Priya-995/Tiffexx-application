@@ -1,0 +1,633 @@
+/* ============================================================
+   My Orders page (Figma node 3:60)
+   ============================================================ */
+
+.main {
+  --coffee-bean: #2b1210;
+  --van-cleef: #52110c;
+  --rock: #4a3330;
+  --dorado: #6b5551;
+  --supernova: #ffca0f;
+  --egg-white: #fff1c7;
+  --bridal-heath: #fffaf0;
+  --bizarre: #efe6da;
+  --pearl-bush: #e6dacb;
+  --bone: #e0d2c2;
+  --crusta: #f57f2c;
+  --roof-terracotta: #b3261e;
+  --wisp-pink: #fdf1f0;
+  --boulder: #757575;
+  --white: #ffffff;
+  --ash: #6a6a6a;
+  --summary-bg: #fbf9f5;
+  --green-bg: #e3f3e8;
+  --green-text: #1e6b3a;
+  --red-bg: #fde8e6;
+  --red-text: #8a1c14;
+
+  --font-body: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-brand: var(--font-poppins), "Poppins", system-ui, sans-serif;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-24: 24px;
+
+  flex: 1 1 auto;
+  max-width: 1160px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 48px;
+  min-width: 0;
+  color: var(--coffee-bean);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: normal;
+  box-sizing: border-box;
+}
+
+.mainInner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 0 48px;
+  background: var(--white);
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 28px;
+  width: 24px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.back img {
+  display: block;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.56px;
+  color: var(--van-cleef);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ---------- Active order summary ---------- */
+
+.activeOrder {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 26px;
+  background: var(--summary-bg);
+  border-bottom: 4px solid var(--crusta);
+  border-radius: 12px;
+}
+
+.activeOrderHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding-top: 5px;
+}
+
+.activeOrderEyebrow,
+.activeOrderKitchen {
+  font-size: 12px;
+  color: var(--ash);
+  margin: 0;
+}
+
+.activeOrderTitle {
+  padding-bottom: 2px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--van-cleef);
+  margin: 0;
+}
+
+.pill {
+  margin-top: 6px;
+  padding: 6px 14px;
+  background: var(--supernova);
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--van-cleef);
+  display: inline-block;
+}
+
+/* ---------- Progress stepper ---------- */
+
+.progress {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progressStep {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.progressDot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.progressLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ash);
+  white-space: nowrap;
+}
+
+/* connector to the next step */
+.progressStep:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 30px;
+  right: -8px;
+  height: 3px;
+  background: var(--pearl-bush);
+}
+
+.progressStepDone .progressDot {
+  background: var(--supernova);
+  color: var(--van-cleef);
+}
+
+.progressStepDone::after {
+  background: var(--supernova) !important;
+}
+
+.progressStepCurrent .progressDot {
+  background: var(--crusta);
+  color: var(--white);
+  box-shadow: 0 0 0 4px rgba(245, 127, 44, 0.35);
+}
+
+.progressStepCurrent .progressLabel {
+  font-weight: 700;
+  color: var(--van-cleef);
+}
+
+.progressStepTodo .progressDot {
+  background: rgba(169, 169, 169, 0.25);
+  color: var(--ash);
+}
+
+.progressStepTodo .progressLabel {
+  font-weight: 400;
+}
+
+/* ---------- Filters + search ---------- */
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 44px;
+  padding: 12.5px 18px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: 22px;
+  font-family: var(--font-body);
+  font-size: 13.3px;
+  font-weight: 400;
+  color: var(--coffee-bean);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip:hover {
+  border-color: var(--van-cleef);
+}
+
+.chipActive {
+  background: var(--van-cleef) !important;
+  border-color: var(--van-cleef) !important;
+  color: var(--white) !important;
+  font-weight: 600;
+}
+
+.search {
+  width: 100%;
+  max-width: 380px;
+  height: 44px;
+  padding: 0 32px 0 18px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: 99px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--coffee-bean);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.search::placeholder {
+  color: var(--boulder);
+}
+
+.search:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid var(--supernova);
+  outline-offset: 2px;
+}
+
+/* ---------- Order cards ---------- */
+
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: var(--radius-8);
+  transition: box-shadow 0.15s ease;
+}
+
+.orderCard:hover {
+  box-shadow: 0 4px 16px rgba(82, 17, 12, 0.05);
+}
+
+.orderCardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.itemIcon {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--egg-white);
+  border-radius: var(--radius-8);
+}
+
+.itemIcon img {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.orderCardText {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.orderCardName {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--coffee-bean);
+  margin: 0;
+}
+
+.itemMeta {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dorado);
+  margin: 0;
+}
+
+.badge {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badgeTransit {
+  background: var(--egg-white);
+  color: var(--van-cleef);
+}
+
+.badgeDelivered {
+  background: var(--green-bg);
+  color: var(--green-text);
+}
+
+.badgeCancelled {
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+
+.details {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--bizarre);
+}
+
+.details summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.details summary::-webkit-details-marker {
+  display: none;
+}
+
+.details summary::after {
+  content: "▾";
+  margin-left: 6px;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.orderDetailsContent {
+  padding: 8px 0 14px;
+  font-size: 13px;
+  color: var(--dorado);
+  line-height: 1.6;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.orderCardFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.orderCardFootRuled {
+  border-top: 1px solid var(--bizarre);
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+}
+
+.totalLabel {
+  font-size: 12px;
+  color: var(--dorado);
+  margin: 0;
+}
+
+.totalAmount {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  margin: 0;
+}
+
+.orderCardActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  height: 40px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: var(--radius-8);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btnPrimary {
+  background: var(--supernova);
+  color: var(--van-cleef);
+}
+
+.btnPrimary:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.btnSm {
+  width: 120px;
+}
+
+.link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.link:hover {
+  color: var(--crusta);
+}
+
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 13px 20px;
+  background: var(--white);
+  border: 1px solid var(--van-cleef);
+  border-radius: var(--radius-6);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btnOutline:hover {
+  background: var(--bridal-heath);
+}
+
+.loadMore {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.emptyState {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--dorado);
+  font-size: 14px;
+  background: var(--summary-bg);
+  border-radius: 8px;
+  border: 1px dashed var(--pearl-bush);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: #2b1210;
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal for Track Order */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 440px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modalHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHead h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: 0;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--dorado);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 800px) {
+  .page {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .aside {
+    flex: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--bizarre);
+  }
+
+  .nav {
+    width: 100%;
+  }
+
+  .mainInner {
+    padding: 24px 16px 32px;
+  }
+
+  .progressLabel {
+    white-space: normal;
+  }
+
+  .orderCardTop {
+    flex-wrap: wrap;
+  }
+}
+

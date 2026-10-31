@@ -1,8 +1,7 @@
-import CartFlow from "@/components/cart/CartFlow";
-import Footer from "@/components/layout/Footer";
+﻿import CartFlow from "@/components/cart/CartFlow";
 
 export const metadata = {
-  title: "Tiffexx – Cart",
+  title: "Tiffexx â€“ Cart",
   description: "Review your meal plan, confirm your delivery address, and complete your order with Tiffexx.",
 };
 
@@ -10,7 +9,6 @@ export default function CartPage() {
   return (
     <>
       <CartFlow />
-      <Footer />
     </>
   );
 }

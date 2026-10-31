@@ -1,0 +1,440 @@
+/* ------------------------------------------------------------
+   Design tokens (Figma: Customer-End-UI / My Wallet)
+------------------------------------------------------------ */
+.main {
+  --cream: #fffaf0;        /* sidebar bg, benefit tiles */
+  --sand-90: #efe6da;      /* dividers */
+  --sand-85: #e6dacb;      /* card borders */
+  --butter: #fff1c7;       /* active nav */
+  --blush: #fdf1f0;        /* sign out bg */
+  --hero-bg: #fbf9f5;
+  --yellow: #ffca0f;
+  --orange: #f57f2c;
+  --maroon: #52110c;
+  --ink: #2b1210;
+  --ink-2: #4a3330;
+  --ink-3: #6b5551;
+  --text-dark: #1a1a1a;
+  --red: #b3261e;
+  --green: #1e6b3a;
+  --white: #ffffff;
+
+  --font-body: var(--font-poppins, 'Poppins', sans-serif);
+  --font-alt: var(--font-plus-jakarta-sans), 'Plus Jakarta Sans', sans-serif;
+
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 1160px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  padding: 0 0 48px;
+  box-sizing: border-box;
+  font-family: var(--font-alt);
+  color: var(--ink);
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1px solid var(--sand-90);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.back:hover {
+  background: var(--sand-90);
+}
+
+.back img {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.main__title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 25px;
+  letter-spacing: 0.56px;
+  color: var(--maroon);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------
+   Balance
+------------------------------------------------------------ */
+.balance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  min-height: 160px;
+  padding: 24px 28px 20px;
+  background: var(--hero-bg);
+  border-bottom: 4px solid var(--orange);
+  border-top: 1px solid var(--sand-85);
+  border-left: 1px solid var(--sand-85);
+  border-right: 1px solid var(--sand-85);
+  border-radius: 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.balance__text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px 0 1px;
+  color: var(--text-dark);
+}
+
+.balance__label,
+.balance__note {
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.balance__amount {
+  padding-bottom: 4px;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: normal;
+  color: var(--maroon);
+  margin: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  font-family: var(--font-alt);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  width: 154px;
+  height: 44px;
+  background: var(--yellow);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--maroon);
+}
+
+.btn--primary:hover {
+  background: #f7b720;
+}
+
+/* ------------------------------------------------------------
+   Cards
+------------------------------------------------------------ */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--sand-85);
+  border-radius: 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--sand-90);
+}
+
+.card__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.link {
+  font-size: 12px;
+  color: var(--maroon);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+/* Transactions */
+.txns {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.txn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--sand-90);
+}
+
+.txn:last-child {
+  border-bottom: 0;
+}
+
+.txn > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.txn__end {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.txn__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.txn__meta {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.txn__amount {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.txn__amount--debit {
+  color: var(--red);
+}
+
+.txn__amount--credit {
+  color: var(--green);
+}
+
+/* Help cards */
+.pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+.pair > .card {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.card--help {
+  min-height: 145px;
+  justify-content: center;
+}
+
+.help__text {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--sand-85);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: background-color 0.15s ease;
+  text-decoration: none;
+  cursor: pointer;
+  background: #fff;
+}
+
+.chip:hover {
+  background: var(--cream);
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.36px;
+  color: var(--maroon);
+  margin-top: 4px;
+}
+
+.contact-links a {
+  text-decoration: underline;
+  color: var(--maroon);
+}
+
+/* ------------------------------------------------------------
+   Benefits
+------------------------------------------------------------ */
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding-top: 4px;
+  width: 100%;
+}
+
+.benefit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 20px;
+  background: var(--cream);
+  border: 1px solid var(--sand-85);
+  border-radius: 8px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.benefit img {
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+
+.benefit__title {
+  padding-top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.52px;
+  color: var(--maroon);
+  margin: 0;
+}
+
+.benefit__text {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* Top-up modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 18, 16, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #fff;
+  border: 1px solid var(--sand-85);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 32px rgba(43, 18, 16, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Toast popup */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--maroon);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------
+   Responsive
+------------------------------------------------------------ */
+@media (max-width: 1000px) {
+  .main {
+    padding: 24px 20px 48px;
+  }
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .page {
+    flex-direction: column;
+    padding: 24px 16px 48px;
+    gap: 24px;
+  }
+  .sidebar {
+    width: 100%;
+    flex-basis: auto;
+    border-right: 1px solid var(--sand-90);
+  }
+  .nav {
+    width: 100%;
+  }
+}
+

@@ -109,7 +109,7 @@ export default function UserDropdown({ isLoggedIn, user, onClose, onLogout }) {
           </Link>
         )}
 
-        <Link href="/rewards" className={s.menuItem} onClick={onClose}>
+        <Link href="/coupons" className={s.menuItem} onClick={onClose}>
           <span className={s.menuIcon}>
             <svg
               width="22"
@@ -204,3 +204,6 @@ export default function UserDropdown({ isLoggedIn, user, onClose, onLogout }) {
     </div>
   );
 }
+
+
+

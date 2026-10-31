@@ -1,5 +1,5 @@
 <svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Frame">
-<path id="Vector" d="M9.952 17.6537L4.298 12L9.952 6.34625L11.0057 7.43075L7.1865 11.25H19.702V12.75H7.1865L11.0057 16.5692L9.952 17.6537Z" fill="#531607"/>
+<g id="Back">
+<path id="Back arrow" d="M12 5L5 12L12 19M5 12H19" stroke-width="2" stroke-linecap="round" stroke="#1C1A17"/>
 </g>
 </svg>

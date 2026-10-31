@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/lib/auth";
 
 const INITIAL_NOTIFICATIONS = [
@@ -302,8 +301,6 @@ export default function Notifications() {
           )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

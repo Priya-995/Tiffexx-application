@@ -1,11 +1,30 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer({ className = "" }) {
+  const pathname = usePathname();
+
+  // Hide footer on authentication screens
+  if (
+    pathname === "/signin" ||
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/reset-password" ||
+    pathname === "/create-new-password" ||
+    pathname === "/new-password"
+  ) {
+    return null;
+  }
+
   return (
     <footer className={`footer ${className}`.trim()}>
       <div className="footer__top">
         <div className="footer__brand">
-          <img src="/assets/logo.png" alt="Tiffexx" width="108" height="26" />
+          <Link href="/" aria-label="Tiffexx home">
+            <img src="/assets/logo.png" alt="Tiffexx" width="108" height="26" />
+          </Link>
           <p>
             Fresh, home-style tiffins delivered daily — order once or subscribe and let
             mealtime run on autopilot.

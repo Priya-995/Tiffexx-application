@@ -1,0 +1,30 @@
+.page {
+  display: flex;
+  align-items: flex-start;
+  gap: 36px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+  background: #ffffff;
+  box-sizing: border-box;
+  min-height: 80vh;
+}
+
+.content {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  .page {
+    flex-direction: column;
+    padding: 20px 16px 48px;
+    gap: 24px;
+  }
+
+  .content {
+    width: 100%;
+  }
+}

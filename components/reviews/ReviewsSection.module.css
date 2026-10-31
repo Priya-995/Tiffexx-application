@@ -1,0 +1,530 @@
+/* ------------------------------------------------------------
+   My Reviews — customer account page
+   Extracted from Figma: Customer End UI, node 1:1769
+   ------------------------------------------------------------ */
+
+.main {
+  --coffee-bean: #2b1210;
+  --van-cleef: #52110c;
+  --rock: #4a3330;
+  --dorado: #6b5551;
+  --supernova: #ffca0f;
+  --egg-white: #fff1c7;
+  --bridal-heath: #fffaf0;
+  --bizarre: #efe6da;
+  --pearl-bush: #e6dacb;
+  --bone: #e0d2c2;
+  --crusta: #f57f2c;
+  --roof-terracotta: #b3261e;
+  --wisp-pink: #fdf1f0;
+  --boulder: #757575;
+  --white: #ffffff;
+  --font-body: var(--font-plus-jakarta-sans), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-brand: var(--font-poppins), 'Poppins', system-ui, sans-serif;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-24: 24px;
+
+  flex: 1 1 auto;
+  max-width: 1160px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 48px;
+  min-width: 0;
+  color: var(--coffee-bean);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: normal;
+  box-sizing: border-box;
+}
+
+.mainInner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 0 48px;
+  background: var(--white);
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 28px;
+  width: 24px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.back img {
+  display: block;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.56px;
+  color: var(--van-cleef);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ---------- Banner ---------- */
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  background: var(--van-cleef);
+  border-bottom: 4px solid var(--crusta);
+  border-radius: var(--radius-8);
+  color: var(--white);
+}
+
+.bannerCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 5px;
+}
+
+.bannerEyebrow,
+.bannerSub {
+  font-size: 12px;
+  margin: 0;
+}
+
+.bannerEyebrow {
+  opacity: 0.9;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.bannerSub {
+  opacity: 0.85;
+}
+
+.bannerTitle {
+  padding-bottom: 4px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--supernova);
+  margin: 0;
+}
+
+.bannerStats {
+  display: flex;
+  gap: 32px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--supernova);
+  margin: 0;
+}
+
+.statLabel {
+  font-size: 12px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+/* ---------- Cards ---------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: var(--radius-8);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bizarre);
+}
+
+.cardHeaderSplit {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--coffee-bean);
+  margin: 0;
+}
+
+.linkSmall {
+  font-size: 12px;
+  color: var(--van-cleef);
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.linkSmall:hover {
+  color: var(--crusta);
+}
+
+/* ---------- Review cards ---------- */
+
+.pendingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reviewCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: var(--radius-8);
+}
+
+.reviewCardTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.itemIcon {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--egg-white);
+  border-radius: var(--radius-8);
+}
+
+.itemIcon img {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.itemName {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--coffee-bean);
+  margin: 0;
+}
+
+.itemMeta {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dorado);
+  margin: 0;
+}
+
+.fieldLabel {
+  display: block;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dorado);
+}
+
+/* ---------- Form ---------- */
+
+.reviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rating {
+  min-width: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.ratingStars {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.starBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--bone);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.starBtn:hover {
+  transform: scale(1.15);
+}
+
+.starActive {
+  color: var(--crusta) !important;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: var(--radius-6);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--coffee-bean);
+  resize: vertical;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.textarea::placeholder {
+  color: var(--boulder);
+}
+
+.textarea:focus-visible {
+  border-color: var(--van-cleef);
+  outline: 2px solid var(--supernova);
+  outline-offset: 0;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  width: 174px;
+  height: 40px;
+  padding: 9px 0;
+  border: 0;
+  border-radius: var(--radius-8);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.btnPrimary {
+  background: var(--supernova);
+  color: var(--van-cleef);
+}
+
+.btnPrimary:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+/* ---------- Submitted reviews ---------- */
+
+.stars {
+  min-width: 100px;
+  padding-bottom: 2px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--crusta);
+  margin: 0;
+}
+
+.starsOff {
+  color: var(--bone);
+}
+
+.quote {
+  margin: 0;
+  font-size: 14px;
+  line-height: 22.4px;
+  color: var(--rock);
+  font-style: normal;
+}
+
+.reviewActions {
+  display: flex;
+  gap: 16px;
+}
+
+.btnText {
+  min-height: 44px;
+  padding: 14px 0;
+  background: none;
+  border: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.btnText:hover {
+  text-decoration: underline;
+}
+
+.btnTextDanger {
+  color: var(--roof-terracotta) !important;
+}
+
+.emptyState {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--dorado);
+  font-size: 14px;
+}
+
+/* Edit review form inline */
+.editBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px;
+  background: #fbf9f5;
+  border-radius: var(--radius-6);
+  border: 1px solid var(--bizarre);
+}
+
+.editActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btnSmall {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 0;
+}
+
+.btnSmallSave {
+  background: var(--supernova);
+  color: var(--van-cleef);
+}
+
+.btnSmallCancel {
+  background: #eee;
+  color: var(--coffee-bean);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: #2b1210;
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+  .pendingGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .page {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .aside {
+    flex: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--bizarre);
+  }
+
+  .nav {
+    width: 100%;
+  }
+
+  .mainInner {
+    padding: 24px 16px 32px;
+  }
+
+  .bannerStats {
+    gap: 24px;
+  }
+}
+

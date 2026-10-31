@@ -1,5 +1,4 @@
-import BlogPostDetail from "@/components/blog/BlogPostDetail";
-import Footer from "@/components/layout/Footer";
+﻿import BlogPostDetail from "@/components/blog/BlogPostDetail";
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -25,7 +24,6 @@ export default async function BlogPostPage({ params }) {
   return (
     <>
       <BlogPostDetail slug={slug} />
-      <Footer />
     </>
   );
 }

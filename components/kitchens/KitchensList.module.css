@@ -270,6 +270,10 @@
 
 /* Footer */
 .footer {
+  position: relative;
+  width: 100%;
+  clear: both;
+  box-sizing: border-box;
   margin-top: 117px;
   background: var(--red-11);
   padding: 52px 100px 26px;

@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans, Work_Sans, Inter, Fraunces, Figtree } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -41,8 +42,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${work.variable} ${inter.variable} ${fraunces.variable} ${figtree.variable}`}>
       <body>
-        
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

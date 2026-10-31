@@ -1,8 +1,8 @@
 import SubscriptionSection from "@/components/subscriptions/SubscriptionSection";
 
 export const metadata = {
-  title: "Your Subscription – Tiffexx",
-  description: "Manage your daily tiffin subscription, delivery days, next delivery, and meal plans on Tiffexx.",
+  title: "My Subscription · Tiffexx",
+  description: "Manage your active daily tiffin subscription, this week's menu, delivery slots, and plans.",
 };
 
 export default function SubscriptionsPage() {

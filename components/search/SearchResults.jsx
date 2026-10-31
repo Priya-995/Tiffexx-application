@@ -154,33 +154,6 @@ export default function SearchResults({ query }) {
           </>
         )}
       </main>
-
-      <footer className={`${s.footer} ${!hasResults ? s["footer--empty"] : ""}`}>
-        <div className={s.footer__grid}>
-          <div>
-            <img className={s.footer__logo} src="/assets/logo.png" alt="Tiffexx" />
-            <p className={s.footer__blurb}>
-              Fresh, home-style tiffins delivered daily — order once or subscribe and let mealtime run on autopilot.
-            </p>
-          </div>
-          <div>
-            <h6>Company</h6>
-            <ul><li>About us</li><li>Blog</li><li>Careers</li><li>Press</li></ul>
-          </div>
-          <div>
-            <h6>For kitchens</h6>
-            <ul><li>Partner with us</li><li>Kitchen dashboard</li><li>Partner terms</li></ul>
-          </div>
-          <div>
-            <h6>Support</h6>
-            <ul><li>FAQ</li><li>Contact us</li><li>Privacy policy</li><li>Terms</li></ul>
-          </div>
-        </div>
-        <div className={s.footer__bottom}>
-          <span>© 2026 Tiffexx Technologies Pvt. Ltd. All rights reserved.</span>
-          <span>Bengaluru · Mumbai · Pune · Hyderabad</span>
-        </div>
-      </footer>
     </div>
   );
 }

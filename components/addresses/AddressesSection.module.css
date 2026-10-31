@@ -1,0 +1,558 @@
+/* ==========================================================
+   My Addresses — extracted from Figma "Customer End UI" (node 1:1501)
+   ========================================================== */
+
+.main {
+  --coffee-bean: #2b1210;
+  --van-cleef: #52110c;
+  --rock: #4a3330;
+  --dorado: #6b5551;
+  --supernova: #ffca0f;
+  --egg-white: #fff1c7;
+  --bridal-heath: #fffaf0;
+  --bizarre: #efe6da;
+  --pearl-bush: #e6dacb;
+  --crusta: #f57f2c;
+  --terracotta: #b3261e;
+  --wisp-pink: #fdf1f0;
+  --boulder: #767676;
+  --placeholder: #757575;
+  --outline-brown: #591a11;
+  --white: #ffffff;
+
+  --font-body: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-brand: var(--font-poppins), "Poppins", system-ui, sans-serif;
+
+  flex: 1 1 auto;
+  max-width: 1160px;
+  padding: 0 0 48px;
+  background: var(--white);
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--coffee-bean);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  margin-bottom: 20px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.back img {
+  display: block;
+}
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.56px;
+  line-height: 37px;
+  color: var(--van-cleef);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.pageSub {
+  font-size: 15px;
+  color: var(--dorado);
+  margin: 0 0 20px 0;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.btn:hover {
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+.btnPrimary {
+  background: var(--supernova);
+  color: var(--van-cleef);
+}
+
+.btnAdd {
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.btnOutline {
+  border-color: var(--outline-brown);
+  color: var(--outline-brown);
+  background: var(--white);
+}
+
+.btnOutline:hover {
+  background: var(--bridal-heath);
+}
+
+/* ---------- Address cards ---------- */
+.addressGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.addressCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 271px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: 8px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.addressCard:hover {
+  box-shadow: 0 6px 18px rgba(82, 17, 12, 0.06);
+}
+
+.addressCard.isDefault {
+  border: 2px solid var(--crusta);
+  padding: 19px 23px; /* offset thicker border */
+}
+
+.addressHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.addressHead h2 {
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--coffee-bean);
+  margin: 0;
+}
+
+.addressIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: var(--egg-white);
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--egg-white);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  white-space: nowrap;
+}
+
+.addressName {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--coffee-bean);
+}
+
+.addressLines {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 20.8px;
+  color: var(--rock);
+}
+
+.addressPhone {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--rock);
+}
+
+.addressActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--bizarre);
+}
+
+.linkBtn {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.linkBtn.danger {
+  color: var(--terracotta);
+}
+
+.linkBtn:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Form card ---------- */
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--pearl-bush);
+  border-radius: 8px;
+}
+
+.formCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bizarre);
+}
+
+.formCardHead h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--coffee-bean);
+  margin: 0;
+}
+
+.formCardLink {
+  font-size: 12px;
+  color: var(--van-cleef);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.formCardLink:hover {
+  color: var(--crusta);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Chips */
+.chipGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.chipGroup legend {
+  width: 100%;
+  padding: 0 0 6px;
+  font-size: 12px;
+  color: var(--dorado);
+  float: left;
+  font-weight: 600;
+}
+
+.chipGroup legend + * {
+  clear: left;
+}
+
+.chip {
+  position: relative;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--pearl-bush);
+  border-radius: 22px;
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--coffee-bean);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.chip input:checked + span {
+  background: var(--van-cleef);
+  border-color: var(--van-cleef);
+  color: var(--white);
+}
+
+.chip input:focus-visible + span {
+  outline: 2px solid var(--crusta);
+  outline-offset: 2px;
+}
+
+/* Fields */
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  color: var(--dorado);
+  font-weight: 600;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  border: 1px solid var(--pearl-bush);
+  border-radius: 6px;
+  background: var(--white);
+  font: inherit;
+  font-size: 14px;
+  color: var(--coffee-bean);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field textarea {
+  min-height: 92px;
+  padding-bottom: 24px;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--placeholder);
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--crusta);
+  box-shadow: 0 0 0 3px rgba(245, 127, 44, 0.18);
+}
+
+/* Checkbox */
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 44px;
+  padding: 12px 4px;
+  font-size: 13px;
+  color: var(--coffee-bean);
+  cursor: pointer;
+}
+
+.checkbox input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 1px solid var(--boulder);
+  border-radius: 3px;
+  background: var(--white);
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox input:checked {
+  background: var(--van-cleef)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 14px no-repeat;
+  border-color: var(--van-cleef);
+}
+
+.checkbox input:focus-visible {
+  outline: 2px solid var(--crusta);
+  outline-offset: 2px;
+}
+
+/* Actions */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.formActions .btn {
+  width: 156px;
+  padding: 0 16px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: #2b1210;
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal for Delivery Areas */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modalHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHead h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--van-cleef);
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: 0;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--dorado);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .addressGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .page {
+    flex-direction: column;
+    padding: 0;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--bizarre);
+  }
+  .main {
+    padding: 24px 20px 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .addressGrid,
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  .formActions {
+    justify-content: stretch;
+  }
+  .formActions .btn {
+    flex: 1 1 0;
+    width: auto;
+  }
+}
+
