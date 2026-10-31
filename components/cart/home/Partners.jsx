@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { partners as partnerData } from "@/lib/data";
+import { slugify } from "@/lib/kitchens";
 
 const initialChips = { open: false, favorites: false, rated: false, fast: false, price: false };
 
@@ -116,8 +117,9 @@ export default function Partners() {
 
       <div className="partners" id="partners">
         {partnerData.map((p) => (
-          <article
+          <Link
             key={p.name}
+            href={`/${slugify(p.name)}`}
             className={`pcard${p.closed ? " pcard--closed" : ""}`}
             data-veg={String(p.veg)}
             data-open={String(!p.closed)}
@@ -155,16 +157,8 @@ export default function Partners() {
                 {p.cuisine} · ({p.reviews})
               </p>
               <p className="pcard__price">From ₹{p.price}/meal</p>
-              <div className="pcard__actions">
-                <Link className="btn btn--solid" href="/partner-listing">
-                  Order now
-                </Link>
-                <Link className="btn btn--outline" href="/partner-listing">
-                  Subscribe
-                </Link>
-              </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </section>

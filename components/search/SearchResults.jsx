@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { slugify } from "@/lib/kitchens";
 import s from "./SearchResults.module.css";
 
 const IMG = "/assets/kitchen-cover.png";
@@ -43,7 +44,12 @@ export default function SearchResults({ query }) {
               </div>
               <div className={s.grid}>
                 {results.map((r) => (
-                  <article key={r.name} className={`${s.card} ${r.closed ? s["card--closed"] : ""}`}>
+                  <Link
+                    key={r.name}
+                    href={`/${slugify(r.name)}`}
+                    className={`${s.card} ${r.closed ? s["card--closed"] : ""}`}
+                    style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
+                  >
                     <div className={`${s.card__media} ${r.tint ? s["card__media--tint"] : ""}`}>
                       <img src={IMG} alt="" />
                       <span className={`${s.diet} ${r.nonveg ? s["diet--nonveg"] : ""}`}></span>
@@ -60,12 +66,8 @@ export default function SearchResults({ query }) {
                       </div>
                       <p className={s.card__cuisine}>{r.cuisine}</p>
                       <p className={s.card__price}>From ₹{r.price}/meal</p>
-                      <div className={s.card__actions}>
-                        <Link href="/partner-listing" className={`${s.btn} ${s["btn--solid"]}`}>Order now</Link>
-                        <Link href="/partner-listing" className={`${s.btn} ${s["btn--outline"]}`}>Subscribe</Link>
-                      </div>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             </section>

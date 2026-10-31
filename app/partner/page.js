@@ -1,14 +1,15 @@
-﻿import PartnerListing from "@/components/partner/PartnerListing";
+import { Suspense } from "react";
+import PartnerListing from "@/components/partner/PartnerListing";
 
 export const metadata = {
-  title: "Amma's Kitchen Â· Tiffexx",
-  description: "Freshly prepared daily home-style North Indian Thali from Amma's Kitchen in Malviya Nagar, Noida. Wallet billing supported.",
+  title: "Partner Listing · Tiffexx",
+  description: "Freshly prepared daily home-style Thalis from verified partner home kitchens. Wallet billing supported.",
 };
 
 export default function PartnerPage() {
   return (
-    <>
+    <Suspense fallback={null}>
       <PartnerListing />
-    </>
+    </Suspense>
   );
 }

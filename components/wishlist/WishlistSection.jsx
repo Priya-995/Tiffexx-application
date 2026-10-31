@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useWishlist } from "@/lib/wishlist";
 import { getInitialCart, saveCart } from "@/lib/cart";
 import PlansForYou from "@/components/cart/home/PlansForYou";
+import PlanCard from "@/components/ui/PlanCard";
 import s from "./WishlistSection.module.css";
 
 export default function WishlistSection() {
@@ -21,8 +22,9 @@ export default function WishlistSection() {
   const handleAddToCart = (item) => {
     const currentCart = getInitialCart();
     const items = [...(currentCart.items || [])];
+    const planName = item.title || item.name || "Lunch Plan";
     const existingIndex = items.findIndex(
-      (x) => String(x.id) === String(item.id) || x.name === item.name
+      (x) => String(x.id) === String(item.id) || x.name === planName
     );
 
     if (existingIndex > -1) {
@@ -30,25 +32,21 @@ export default function WishlistSection() {
     } else {
       items.push({
         id: item.id,
-        name: item.name,
-        tag:
-          item.tag ||
-          (item.meal === "dinner"
-            ? "Dinner"
-            : item.meal === "breakfast"
-            ? "Breakfast"
-            : "Lunch"),
-        sub: item.desc || "Daily home-style meal",
-        perDay: item.price,
+        name: planName,
+        tag: "Plan",
+        sub: item.descBold
+          ? `${item.descBold} ${item.descLight || ""}`
+          : (item.desc || "Daily home-style tiffin"),
+        perDay: item.price ? Number(String(item.price).replace(/[^\d]/g, "")) : 89,
         qty: 1,
-        kitchen: item.kitchen || "Amma's Kitchen",
+        kitchen: item.kitchen || "Perfect Kitchen",
         liked: true,
       });
     }
 
     const updated = { ...currentCart, items };
     saveCart(updated);
-    showToast(`✓ Added "${item.name}" to cart!`);
+    router.push("/cart?checkout=true");
   };
 
   const handleRemove = (item) => {
@@ -101,58 +99,13 @@ export default function WishlistSection() {
         ) : (
           <div className={s.itemsGrid}>
             {wishlistItems.map((item) => (
-              <article key={item.id} className={s.mealCard}>
-                <div className={s.mealMedia}>
-                  <img
-                    className={s.mealImg}
-                    src={item.img || "/assets/thali.png"}
-                    alt={item.name}
-                  />
-                  <button
-                    type="button"
-                    className={s.favBtn}
-                    onClick={() => handleRemove(item)}
-                    aria-label={`Remove ${item.name} from wishlist`}
-                    title="Remove from wishlist"
-                  >
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="#c0522f"
-                      stroke="#c0522f"
-                      strokeWidth="2"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className={s.mealContent}>
-                  <div className={s.kitchenRow}>
-                    <Link
-                      href={item.link || "/partner-listing"}
-                      className={s.kitchenName}
-                    >
-                      {item.kitchen || "Amma's Kitchen"}
-                    </Link>
-                  </div>
-
-                  <h3 className={s.mealTitle}>{item.name}</h3>
-                  <p className={s.mealDesc}>{item.desc}</p>
-
-                  <div className={s.mealFooter}>
-                    <span className={s.mealPrice}>₹{item.price}</span>
-                    <button
-                      type="button"
-                      className={s.addBtn}
-                      onClick={() => handleAddToCart(item)}
-                    >
-                      + Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </article>
+              <PlanCard
+                key={item.id}
+                plan={item}
+                isFav={true}
+                onToggleFav={() => handleRemove(item)}
+                onSubscribe={() => handleAddToCart(item)}
+              />
             ))}
           </div>
         )}
@@ -163,6 +116,7 @@ export default function WishlistSection() {
             title="Plans for You"
             subtitle="Daily tiffin on autopilot, freshly curated from top kitchens"
             showSeeAll={true}
+            onToast={showToast}
           />
         </div>
 

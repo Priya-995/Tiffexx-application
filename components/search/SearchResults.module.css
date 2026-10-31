@@ -33,10 +33,33 @@
 
 /* Restaurant cards */
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: start; }
-.card { position: relative; background: #fff; border: 1px solid var(--orange-85); border-radius: 14px; overflow: hidden; }
+.card {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--orange-85);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px -4px rgba(43, 18, 16, 0.12),
+              0 6px 14px -2px rgba(43, 18, 16, 0.06);
+  border-color: rgba(255, 202, 15, 0.65);
+}
+.card:hover .card__media > img {
+  transform: scale(1.06);
+}
+.card:hover .card__name {
+  color: var(--brand-dark, #52110c);
+}
 .card--closed { opacity: .62; }
-.card__media { position: relative; height: 153px; background: linear-gradient(150.2deg, var(--orange-80) 0%, var(--orange-60) 100%); }
-.card__media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.card__media { position: relative; height: 153px; background: linear-gradient(150.2deg, var(--orange-80) 0%, var(--orange-60) 100%); overflow: hidden; }
+.card__media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .card__media--tint::after { content: ""; position: absolute; inset: 0; background: rgba(89, 26, 17, .2); }
 .card__media > * { z-index: 1; }
 .diet { position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; background: #fff; border: 1px solid var(--chartreuse-38); border-radius: 3px; display: flex; align-items: center; justify-content: center; }
@@ -45,7 +68,7 @@
 .diet--nonveg::before { border-radius: 0; background: var(--red-44); -webkit-mask: url(/assets/nonveg-mask.svg) center/7px 7px no-repeat; mask: url(/assets/nonveg-mask.svg) center/7px 7px no-repeat; }
 .tag { position: absolute; right: 9px; top: 9px; background: var(--red-11); color: var(--orange-56); font: 700 10.5px var(--font-body); padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
 .overlay { position: absolute; inset: 0; background: rgba(43, 27, 20, .55); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12.5px; font-weight: 700; letter-spacing: .375px; text-align: center; }
-.card__body { display: flex; flex-direction: column; gap: 12px; padding: 13px 14px 15px; }
+.card__body { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 18px; }
 .card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .card__name { font-size: 18px; font-weight: 700; color: var(--ink); line-height: normal; }
 .rating { display: flex; align-items: center; gap: 3px; background: var(--grey-94); border-radius: 5px; padding: 2px 6px; font: 700 11.5px var(--font-body); color: var(--chartreuse-38); flex-shrink: 0; }

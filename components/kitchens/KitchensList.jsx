@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { slugify } from "@/lib/kitchens";
 import s from "./KitchensList.module.css";
 
 const KITCHENS = Array.from({ length: 12 }, (_, i) => ({
@@ -43,7 +44,9 @@ export default function KitchensList() {
                 <div className={s.tile__card}>
                   <div className={s.tile__row}>
                     <div className={s.tile__left}>
-                      <span className={s.tile__name}>{k.name}</span>
+                      <Link href={`/${slugify(k.name)}`} className={s.tile__name}>
+                        {k.name}
+                      </Link>
                       <span className={s.tile__about}>{k.about}</span>
                     </div>
                     <div className={s.tile__right}>
@@ -55,7 +58,7 @@ export default function KitchensList() {
                       <span className={s.tile__meta}>{k.meta}</span>
                     </div>
                   </div>
-                  <Link href="/partner-listing" className={s.tile__cta}>Explore Menu</Link>
+                  <Link href={`/${slugify(k.name)}`} className={s.tile__cta}>Explore Menu</Link>
                 </div>
               </article>
             ))}
@@ -70,7 +73,9 @@ export default function KitchensList() {
                 <div className={s.tile__card}>
                   <div className={s.tile__row}>
                     <div className={s.tile__left}>
-                      <span className={s.tile__name}>{k.name}</span>
+                      <Link href={`/${slugify(k.name)}`} className={s.tile__name}>
+                        {k.name}
+                      </Link>
                       <span className={s.tile__about}>{k.about}</span>
                     </div>
                     <div className={s.tile__right}>
@@ -82,7 +87,7 @@ export default function KitchensList() {
                       <span className={s.tile__meta}>{k.meta}</span>
                     </div>
                   </div>
-                  <Link href="/partner-listing" className={s.tile__cta}>Explore Menu</Link>
+                  <Link href={`/${slugify(k.name)}`} className={s.tile__cta}>Explore Menu</Link>
                 </div>
               </article>
             ))}
@@ -97,7 +102,9 @@ export default function KitchensList() {
                 <div className={s.tile__card}>
                   <div className={s.tile__row}>
                     <div className={s.tile__left}>
-                      <span className={s.tile__name}>{k.name}</span>
+                      <Link href={`/${slugify(k.name)}`} className={s.tile__name}>
+                        {k.name}
+                      </Link>
                       <span className={s.tile__about}>{k.about}</span>
                     </div>
                     <div className={s.tile__right}>
@@ -109,7 +116,7 @@ export default function KitchensList() {
                       <span className={s.tile__meta}>{k.meta}</span>
                     </div>
                   </div>
-                  <Link href="/partner-listing" className={s.tile__cta}>Explore Menu</Link>
+                  <Link href={`/${slugify(k.name)}`} className={s.tile__cta}>Explore Menu</Link>
                 </div>
               </article>
             ))}

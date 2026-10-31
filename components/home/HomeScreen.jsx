@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getInitialCart, saveCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { slugify } from "@/lib/kitchens";
+import PlanCard from "@/components/ui/PlanCard";
 import s from "./HomeScreen.module.css";
 
 const PARTNERS_DATA = [
@@ -17,7 +20,7 @@ const PARTNERS_DATA = [
     tag: "Best value",
     closed: false,
     shade: false,
-    link: "/partner-listing",
+    link: "/ammas-kitchen",
   },
   {
     id: "p2",
@@ -29,7 +32,7 @@ const PARTNERS_DATA = [
     tag: null,
     closed: false,
     shade: false,
-    link: "/partner-listing",
+    link: "/punjab-rasoi",
   },
   {
     id: "p3",
@@ -42,7 +45,7 @@ const PARTNERS_DATA = [
     closed: true,
     closedText: "Closed · opens 6:00 PM",
     shade: false,
-    link: "/partner-listing",
+    link: "/dragon-wok-express",
   },
   {
     id: "p4",
@@ -54,7 +57,7 @@ const PARTNERS_DATA = [
     tag: "Top rated",
     closed: false,
     shade: false,
-    link: "/partner-listing",
+    link: "/ghar-ka-swaad",
   },
   {
     id: "p5",
@@ -66,7 +69,7 @@ const PARTNERS_DATA = [
     tag: null,
     closed: false,
     shade: true,
-    link: "/partner-listing",
+    link: "/annapurna-cloud-kitchen",
   },
   {
     id: "p6",
@@ -78,7 +81,7 @@ const PARTNERS_DATA = [
     tag: null,
     closed: false,
     shade: true,
-    link: "/partner-listing",
+    link: "/bong-bhoj",
   },
   {
     id: "p7",
@@ -90,7 +93,7 @@ const PARTNERS_DATA = [
     tag: "New",
     closed: false,
     shade: true,
-    link: "/partner-listing",
+    link: "/gujarat-rasoi",
   },
   {
     id: "p8",
@@ -102,7 +105,7 @@ const PARTNERS_DATA = [
     tag: null,
     closed: false,
     shade: true,
-    link: "/partner-listing",
+    link: "/continental-bites",
   },
 ];
 
@@ -116,6 +119,7 @@ const CUISINES = [
 ];
 
 const RESTAURANTS = [
+  // South Indian
   {
     id: "r1",
     name: "Hello Kitchen",
@@ -144,16 +148,15 @@ const RESTAURANTS = [
   },
   {
     id: "r3",
-    name: "Mood Light Cafe & Restaurant",
-    score: "3.6",
-    midScore: true,
+    name: "Dosa Plaza Express",
+    score: "4.5",
     cuisine: "South Indian",
-    cost: "₹100 for two",
-    loc: "Sector 62, Noida",
-    dist: "2.7 km",
-    offer: "Flat 15% OFF",
-    promoted: true,
-    img: "/assets/restaurant-2.png",
+    cost: "₹120 for two",
+    loc: "Sector 63, Noida",
+    dist: "1.8 km",
+    offer: "Flat 25% OFF",
+    promoted: false,
+    img: "/assets/restaurant-3.png",
   },
   {
     id: "r4",
@@ -171,31 +174,183 @@ const RESTAURANTS = [
   },
   {
     id: "r5",
-    name: "The Grindhouse By Cafe 13",
-    score: "4.2",
+    name: "Madras Tiffin Room",
+    score: "4.6",
     cuisine: "South Indian",
-    cost: "₹100 for two",
-    loc: "Sector 62, Noida",
-    note: "Opens in 18 minutes",
-    dist: "2.1 km",
-    offer: "Flat 10% OFF",
+    cost: "₹90 for two",
+    loc: "Sector 50, Noida",
+    dist: "3.2 km",
+    offer: "Flat 15% OFF",
+    promoted: false,
+    img: "/assets/restaurant-1.png",
+  },
+
+  // North Indian
+  {
+    id: "r6",
+    name: "Punjab Rasoi Deluxe",
+    score: "4.5",
+    cuisine: "North Indian",
+    cost: "₹150 for two",
+    loc: "Sector 18, Noida",
+    dist: "1.4 km",
+    offer: "Flat 20% OFF",
     promoted: true,
-    tall: true,
+    img: "/assets/restaurant-2.png",
+  },
+  {
+    id: "r7",
+    name: "Amritsari Kulcha Junction",
+    score: "4.3",
+    cuisine: "North Indian",
+    cost: "₹120 for two",
+    loc: "Sector 62, Noida",
+    dist: "2.5 km",
+    offer: "Flat 15% OFF",
+    promoted: false,
+    img: "/assets/restaurant-1.png",
+  },
+  {
+    id: "r8",
+    name: "Pind Da Swaad",
+    score: "4.6",
+    cuisine: "North Indian",
+    cost: "₹130 for two",
+    loc: "Sector 50, Noida",
+    dist: "2.9 km",
+    offer: "Flat 25% OFF",
+    promoted: false,
     img: "/assets/restaurant-3.png",
   },
   {
-    id: "r6",
-    name: "The Grindhouse By Cafe 13",
-    score: "4.2",
-    cuisine: "South Indian",
-    cost: "₹ 100 for two",
-    loc: "Sector 62, Noida",
-    note: "Opens in 18 minutes",
-    dist: "2.1 km",
+    id: "r9",
+    name: "Dilli 6 Parantha House",
+    score: "4.4",
+    cuisine: "North Indian",
+    cost: "₹110 for two",
+    loc: "Sector 63, Noida",
+    note: "Opens in 15 minutes",
+    dist: "2.0 km",
     offer: "Flat 10% OFF",
     promoted: true,
     tall: true,
+    img: "/assets/restaurant-2.png",
+  },
+
+  // Chinese
+  {
+    id: "r10",
+    name: "Dragon Wok Express",
+    score: "4.3",
+    cuisine: "Chinese",
+    cost: "₹140 for two",
+    loc: "Sector 63, Noida",
+    dist: "1.6 km",
+    offer: "Flat 20% OFF",
+    promoted: true,
     img: "/assets/restaurant-3.png",
+  },
+  {
+    id: "r11",
+    name: "The Red Lantern Bowl",
+    score: "4.5",
+    cuisine: "Chinese",
+    cost: "₹160 for two",
+    loc: "Sector 18, Noida",
+    dist: "2.4 km",
+    offer: "Flat 15% OFF",
+    promoted: false,
+    img: "/assets/restaurant-1.png",
+  },
+  {
+    id: "r12",
+    name: "Chopsticks & Dimsum Co.",
+    score: "4.2",
+    cuisine: "Chinese",
+    cost: "₹130 for two",
+    loc: "Sector 62, Noida",
+    dist: "2.8 km",
+    offer: "Flat 10% OFF",
+    promoted: false,
+    img: "/assets/restaurant-2.png",
+  },
+
+  // Gujarati
+  {
+    id: "r13",
+    name: "Gujarat Rasoi Bhavan",
+    score: "4.7",
+    cuisine: "Gujarati",
+    cost: "₹110 for two",
+    loc: "Sector 76, Noida",
+    dist: "2.6 km",
+    offer: "Flat 20% OFF",
+    promoted: false,
+    img: "/assets/restaurant-1.png",
+  },
+  {
+    id: "r14",
+    name: "Kathiyawadi Thali Ghar",
+    score: "4.6",
+    cuisine: "Gujarati",
+    cost: "₹120 for two",
+    loc: "Sector 62, Noida",
+    dist: "1.9 km",
+    offer: "Flat 15% OFF",
+    promoted: true,
+    img: "/assets/restaurant-2.png",
+  },
+
+  // Continental
+  {
+    id: "r15",
+    name: "Continental Bites & Bowls",
+    score: "4.4",
+    cuisine: "Continental",
+    cost: "₹180 for two",
+    loc: "Sector 144, Noida",
+    dist: "3.4 km",
+    offer: "Flat 20% OFF",
+    promoted: true,
+    img: "/assets/restaurant-3.png",
+  },
+  {
+    id: "r16",
+    name: "The Salad & Pasta Kitchen",
+    score: "4.5",
+    cuisine: "Continental",
+    cost: "₹160 for two",
+    loc: "Sector 62, Noida",
+    dist: "2.0 km",
+    offer: "Flat 15% OFF",
+    promoted: false,
+    img: "/assets/restaurant-1.png",
+  },
+
+  // Bengali
+  {
+    id: "r17",
+    name: "Bong Bhoj Kitchen",
+    score: "4.6",
+    cuisine: "Bengali",
+    cost: "₹140 for two",
+    loc: "Indirapuram, Ghaziabad",
+    dist: "2.8 km",
+    offer: "Flat 20% OFF",
+    promoted: true,
+    img: "/assets/restaurant-2.png",
+  },
+  {
+    id: "r18",
+    name: "Calcutta Street Flavours",
+    score: "4.5",
+    cuisine: "Bengali",
+    cost: "₹130 for two",
+    loc: "Sector 62, Noida",
+    dist: "2.3 km",
+    offer: "Flat 15% OFF",
+    promoted: false,
+    img: "/assets/restaurant-1.png",
   },
 ];
 
@@ -258,13 +413,13 @@ const PLANS = [
 ];
 
 const MEAL_ITEMS = [
+  // --- LUNCH ITEMS ---
   {
     id: "meal-aloo-parantha",
     name: "Aloo Parantha + Dahi",
     kitchen: "Meena's Tiffin",
     rating: "8.7",
     price: 35,
-    variant: "dark",
     img: "/assets/meal-aloo.png",
     mealType: "lunch",
   },
@@ -274,52 +429,107 @@ const MEAL_ITEMS = [
     kitchen: "Meena's Tiffin",
     rating: "8.7",
     price: 65,
-    variant: "green",
-    dim: true,
     img: "/assets/meal-lunch.png",
     mealType: "lunch",
   },
   {
-    id: "meal-butter-chicken-1",
-    name: "Butter Chicken + Rice",
-    kitchen: "Meena's Tiffin",
-    rating: "8.7",
-    price: 120,
-    variant: "standard",
-    dim: true,
-    dkPrice: true,
-    img: "/assets/meal-dinner.png",
-    mealType: "dinner",
-  },
-  {
-    id: "meal-butter-chicken-2",
-    name: "Butter Chicken + Rice",
-    kitchen: "Meena's Tiffin",
-    rating: "8.7",
-    price: 120,
-    variant: "standard",
-    dim: true,
-    img: "/assets/meal-dinner.png",
-    mealType: "dinner",
-  },
-  {
     id: "meal-thali-special",
-    name: "Thali Special",
+    name: "Special Thali (Dal, Sabji & 4 Roti)",
     kitchen: "Meena's Tiffin",
     rating: "8.7",
-    lightStar: true,
     price: 85,
-    variant: "brown",
-    glassAdd: true,
     img: "/assets/meal-thali-special.png",
     mealType: "lunch",
+  },
+  {
+    id: "meal-chole-bhature",
+    name: "Chole Bhature Platter",
+    kitchen: "Punjab Rasoi",
+    rating: "8.9",
+    price: 75,
+    img: "/assets/meal-card-1.png",
+    mealType: "lunch",
+  },
+  {
+    id: "meal-south-thali",
+    name: "South Indian Lunch Feast",
+    kitchen: "Amma's Kitchen",
+    rating: "9.1",
+    price: 90,
+    img: "/assets/dish-thali.png",
+    mealType: "lunch",
+  },
+  {
+    id: "meal-rajma-chawal",
+    name: "Homestyle Rajma Chawal Bowl",
+    kitchen: "Ananya's Kitchen",
+    rating: "8.8",
+    price: 60,
+    img: "/assets/meal-thali.png",
+    mealType: "lunch",
+  },
+
+  // --- DINNER ITEMS ---
+  {
+    id: "meal-butter-chicken-1",
+    name: "Butter Chicken + Rice",
+    kitchen: "Punjab Rasoi",
+    rating: "8.9",
+    price: 120,
+    img: "/assets/meal-butter-chicken.png",
+    mealType: "dinner",
+  },
+  {
+    id: "meal-paneer-butter",
+    name: "Paneer Butter Masala + Naan",
+    kitchen: "Meena's Tiffin",
+    rating: "8.8",
+    price: 110,
+    img: "/assets/meal-dinner.png",
+    mealType: "dinner",
+  },
+  {
+    id: "meal-dal-tadka",
+    name: "Dal Tadka + Jeera Rice Combo",
+    kitchen: "Amma's Kitchen",
+    rating: "8.7",
+    price: 79,
+    img: "/assets/menu-dal-tadka.png",
+    mealType: "dinner",
+  },
+  {
+    id: "meal-royal-thali",
+    name: "Royal Deluxe Dinner Thali",
+    kitchen: "Ananya's Kitchen",
+    rating: "9.2",
+    price: 129,
+    img: "/assets/meal-card-4.png",
+    mealType: "dinner",
+  },
+  {
+    id: "meal-kadhai-paneer",
+    name: "Kadhai Paneer + 3 Butter Roti",
+    kitchen: "Punjab Rasoi",
+    rating: "8.7",
+    price: 99,
+    img: "/assets/plan-food.png",
+    mealType: "dinner",
+  },
+  {
+    id: "meal-biryani-combo",
+    name: "Dum Biryani + Mirchi Ka Salan",
+    kitchen: "Punjab Rasoi",
+    rating: "9.0",
+    price: 135,
+    img: "/assets/restaurant-2.png",
+    mealType: "dinner",
   },
 ];
 
 const POPULAR_PICKS = [
   { id: "pop-1", kitchen: "Ananya's Kitchen", cuisine: "South Indian", dish: "Regular Thali", price: 89 },
-  { id: "pop-2", kitchen: "Meena's Tiffin", cuisine: "North Indian", dish: "Dahi BHalla", price: 99 },
-  { id: "pop-3", kitchen: "Meena's Tiffin", cuisine: "North Indian", dish: "Dahi BHalla", price: 99 },
+  { id: "pop-2", kitchen: "Meena's Tiffin", cuisine: "North Indian", dish: "Dahi Bhalla", price: 99 },
+  { id: "pop-3", kitchen: "Meena's Tiffin", cuisine: "North Indian", dish: "Dahi Bhalla", price: 99 },
   { id: "pop-4", kitchen: "Ananya's Kitchen", cuisine: "South Indian", dish: "Rajma Chawal", price: 89, isDay: true },
   { id: "pop-5", kitchen: "Ananya's Kitchen", cuisine: "South Indian", dish: "Rajma Chawal", price: 89, isDay: true },
   { id: "pop-6", kitchen: "Meena's Tiffin", cuisine: "North Indian", dish: "Deluxe Thali", price: 99 },
@@ -327,6 +537,7 @@ const POPULAR_PICKS = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   // Active States
@@ -401,16 +612,50 @@ export default function HomeScreen() {
     showToast(`✓ Added "${item.name || item.dish || item.title}" to cart!`);
   };
 
+  const handleSubscribePlan = (plan) => {
+    const currentCart = getInitialCart();
+    const items = [...(currentCart.items || [])];
+    const planName = plan.title || plan.name || "Lunch Plan";
+    const existingIndex = items.findIndex((x) => x.id === plan.id || x.name === planName);
+
+    if (existingIndex > -1) {
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+    } else {
+      items.push({
+        id: plan.id,
+        name: planName,
+        tag: "Plan",
+        sub: plan.descBold ? `${plan.descBold} ${plan.descLight || ""}` : "Daily home-style tiffin",
+        perDay: plan.price ? Number(String(plan.price).replace(/[^\d]/g, "")) : 89,
+        qty: 1,
+        kitchen: plan.kitchen || "Perfect Kitchen",
+        liked: true,
+      });
+    }
+
+    const updated = { ...currentCart, items };
+    saveCart(updated);
+    router.push("/cart?checkout=true");
+  };
+
   const handleToggleWishlist = (plan) => {
     const isNowSaved = toggleWishlist({
       id: plan.id,
-      name: plan.title,
+      name: plan.title || plan.name,
+      title: plan.title || plan.name,
       price: plan.price,
+      wasPrice: plan.wasPrice || 109,
       kitchen: plan.kitchen,
+      descBold: plan.descBold || "Special Thali  ",
+      descLight: plan.descLight || "(Dali ,Sabji & 4 Roti )",
+      rating: plan.rating || "4.2",
+      veg: plan.veg,
+      badge: "Top Rated",
+      mealType: "Lunch",
       tag: "Lunch Plan",
       img: "/assets/sub-plan.png",
     });
-    showToast(isNowSaved ? `✓ Saved "${plan.title}" to Wishlist!` : `Removed "${plan.title}" from Wishlist`);
+    showToast(isNowSaved ? `✓ Saved "${plan.title || plan.name}" to Wishlist!` : `Removed "${plan.title || plan.name}" from Wishlist`);
   };
 
   // Filter partners
@@ -420,6 +665,11 @@ export default function HomeScreen() {
     if (activeChip === "Rated 4+" && parseFloat(p.rating) < 4.4) return false;
     return true;
   });
+
+  // Filter restaurants by selected cuisine
+  const filteredRestaurants = RESTAURANTS.filter(
+    (rest) => !activeCuisine || rest.cuisine === activeCuisine
+  );
 
   return (
     <main className={s.page}>
@@ -579,7 +829,11 @@ export default function HomeScreen() {
 
         <div className={s["partner-grid"]}>
           {filteredPartners.map((partner) => (
-            <article key={partner.id} className={`${s.partner} ${partner.closed ? s.closed : ""}`}>
+            <Link
+              key={partner.id}
+              href={partner.link || "/partner-listing"}
+              className={`${s.partner} ${partner.closed ? s.closed : ""}`}
+            >
               <div className={`${s["p-cover"]} ${partner.shade ? s.shade : ""}`}>
                 <img src="/assets/partner-bg.png" alt={partner.name} />
                 <span className={`${s.diet} ${!partner.veg ? s.nonveg : ""}`}>
@@ -607,16 +861,8 @@ export default function HomeScreen() {
                 </div>
                 <div className={s["p-sub"]}>{partner.sub}</div>
                 <div className={s["p-price"]}>{partner.price}</div>
-                <div className={s["p-actions"]}>
-                  <Link className={`${s.btn} ${s["btn-primary"]}`} href={partner.link}>
-                    Order now
-                  </Link>
-                  <Link className={`${s.btn} ${s["btn-outline"]}`} href={partner.link}>
-                    Subscribe
-                  </Link>
-                </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
@@ -703,8 +949,12 @@ export default function HomeScreen() {
         </div>
 
         <div className={`${s["h-scroll"]} ${s["rest-row"]}`}>
-          {RESTAURANTS.map((rest, i) => (
-            <Link key={`${rest.id}-${i}`} className={s.rest} href="/partner-listing">
+          {filteredRestaurants.map((rest) => (
+            <Link
+              key={rest.id}
+              className={s.rest}
+              href={`/${slugify(rest.name)}`}
+            >
               <div className={s["rest-img"]}>
                 <img src={rest.img} alt={rest.name} />
                 <div className={s["offer-pill"]}>
@@ -748,68 +998,29 @@ export default function HomeScreen() {
           </Link>
         </div>
         <div className={`${s["h-scroll"]} ${s["plan-row"]}`}>
-          {PLANS.map((plan) => {
-            const isFav = isInWishlist(plan.id);
-            return (
-              <article key={plan.id} className={s.plan}>
-                <div className={s["plan-img"]}>
-                  <img className={s.bg} src="/assets/sub-plan.png" alt={plan.title} />
-                  <span className={`${s.glass} ${s.a}`}>Top Rated</span>
-                  <span className={`${s.glass} ${s.b}`}>Lunch</span>
-                  <img
-                    className={s.fav}
-                    src="/assets/food-rating-badge.svg"
-                    alt="Wishlist"
-                    onClick={() => handleToggleWishlist(plan)}
-                    style={{ filter: isFav ? "sepia(1) saturate(5) hue-rotate(320deg)" : "none" }}
-                  />
-                </div>
-                <div className={s["plan-body"]}>
-                  <div className={s["plan-info"]}>
-                    <div className={s["plan-title"]}>
-                      {plan.title}
-                      <span className={s["plan-rate"]}>
-                        <img src="/assets/star-small.svg" alt="" />
-                        {plan.rating}
-                      </span>
-                    </div>
-                    <div className={s["plan-kitchen"]}>{plan.kitchen}</div>
-                    <div className={s["plan-desc"]}>
-                      <span>
-                        {plan.descBold}
-                        <b>{plan.descLight}</b>
-                      </span>
-                      <span className={`${s.mark} ${!plan.veg ? s.nv : ""}`}>
-                        <i />
-                      </span>
-                    </div>
-                    <div className={s["price-line"]}>
-                      <b>₹{plan.price}</b>
-                      <span>/day</span>
-                      <s>₹{plan.wasPrice}</s>
-                    </div>
-                  </div>
-                  <button
-                    className={s["btn-book"]}
-                    type="button"
-                    onClick={() => handleAddToCart({ id: plan.id, name: plan.title, price: plan.price, tag: "Plan", kitchen: plan.kitchen })}
-                  >
-                    Subscribe
-                  </button>
-                </div>
-              </article>
-            );
-          })}
+          {PLANS.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              isFav={isInWishlist(plan.id)}
+              onToggleFav={handleToggleWishlist}
+              onSubscribe={handleSubscribePlan}
+            />
+          ))}
         </div>
       </section>
 
       {/* Browse by meal */}
       <section className={s.browse}>
         <h2>Browse by meal</h2>
-        <div className={s["meal-tabs"]}>
+        <div className={s["meal-tabs"]} role="tablist">
           <div
             className={`${s.tab} ${activeMealTab === "lunch" ? s.active : ""}`}
             onClick={() => setActiveMealTab("lunch")}
+            role="tab"
+            aria-selected={activeMealTab === "lunch"}
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setActiveMealTab("lunch")}
           >
             <img src="/assets/meal-lunch.png" alt="Lunch" />
             <div>
@@ -820,6 +1031,10 @@ export default function HomeScreen() {
           <div
             className={`${s.tab} ${activeMealTab === "dinner" ? s.active : ""}`}
             onClick={() => setActiveMealTab("dinner")}
+            role="tab"
+            aria-selected={activeMealTab === "dinner"}
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setActiveMealTab("dinner")}
           >
             <img src="/assets/meal-dinner.png" alt="Dinner" />
             <div>
@@ -830,30 +1045,80 @@ export default function HomeScreen() {
         </div>
 
         <div className={`${s["h-scroll"]} ${s["meal-row"]}`}>
-          {MEAL_ITEMS.map((meal) => {
-            let variantClass = "";
-            if (meal.variant === "dark") variantClass = s.dark;
-            else if (meal.variant === "green") variantClass = s.green;
-            else if (meal.variant === "brown") variantClass = s.brown;
+          {MEAL_ITEMS.filter((meal) => meal.mealType === activeMealTab).map((meal) => {
+            const isSaved = isInWishlist(meal.id);
 
             return (
-              <article key={meal.id} className={`${s.meal} ${variantClass}`}>
-                <div className={`${s["meal-img"]} ${meal.dim ? s.dim : ""}`}>
+              <article
+                key={meal.id}
+                className={s.meal}
+                onClick={() => router.push(`/${slugify(meal.kitchen)}`)}
+                title={`View ${meal.kitchen}`}
+              >
+                <div className={s["meal-img"]}>
                   <img src={meal.img} alt={meal.name} />
+
+                  {/* Glass tag for Lunch / Dinner */}
+                  <div className={s["meal-glass-tag"]}>
+                    <span className={`${s["glass-dot"]} ${meal.mealType === "dinner" ? s.dinner : ""}`} />
+                    <span>{meal.mealType === "dinner" ? "Dinner" : "Lunch"}</span>
+                  </div>
+
+                  {/* Wishlist Heart Button */}
+                  <button
+                    type="button"
+                    className={s["meal-fav-btn"]}
+                    aria-label={isSaved ? `Remove ${meal.name} from wishlist` : `Add ${meal.name} to wishlist`}
+                    title={isSaved ? "Saved in wishlist" : "Add to wishlist"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleWishlist(meal);
+                    }}
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill={isSaved ? "#b3261e" : "rgba(0,0,0,0.3)"}
+                      stroke={isSaved ? "#b3261e" : "#ffffff"}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
                 </div>
+
                 <div className={s["meal-body"]}>
                   <div className={s["meal-top"]}>
                     <b>{meal.name}</b>
-                    <span className={meal.lightStar ? s.light : ""}>{meal.rating}</span>
+                    <span>{meal.rating}</span>
                   </div>
-                  <div className={s["meal-kitchen"]}>{meal.kitchen}</div>
+                  <Link
+                    href={`/${slugify(meal.kitchen)}`}
+                    className={s["meal-kitchen"]}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {meal.kitchen}
+                  </Link>
                   <div className={s["meal-foot"]}>
-                    <b className={meal.dkPrice ? s.dk : ""}>₹{meal.price}</b>
+                    <b>₹{meal.price}</b>
                     <button
-                      className={`${s.add} ${meal.glassAdd ? s["glass-add"] : ""}`}
+                      className={s.add}
                       type="button"
                       aria-label={`Add ${meal.name} to cart`}
-                      onClick={() => handleAddToCart({ id: meal.id, name: meal.name, price: meal.price, tag: "Meal", kitchen: meal.kitchen })}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart({
+                          id: meal.id,
+                          name: meal.name,
+                          price: meal.price,
+                          tag: meal.mealType === "dinner" ? "Dinner" : "Lunch",
+                          kitchen: meal.kitchen,
+                          img: meal.img,
+                        });
+                      }}
                     >
                       <img src="/assets/add-icon-2.svg" alt="" />
                     </button>
@@ -878,7 +1143,12 @@ export default function HomeScreen() {
         </div>
         <div className={`${s["h-scroll"]} ${s["meal-row"]}`}>
           {POPULAR_PICKS.map((pop, i) => (
-            <article key={`${pop.id}-${i}`} className={s.pop}>
+            <article
+              key={`${pop.id}-${i}`}
+              className={s.pop}
+              onClick={() => router.push(`/${slugify(pop.kitchen)}`)}
+              title={`View ${pop.kitchen}`}
+            >
               <div className={s["pop-img"]}>
                 <img src="/assets/popular-bg.png" alt={pop.dish} />
                 <span className={s["pop-rate"]}>
@@ -888,7 +1158,15 @@ export default function HomeScreen() {
               </div>
               <div className={s["pop-body"]}>
                 <span className={s["cuisine-tag"]}>{pop.cuisine}</span>
-                <h4>{pop.kitchen}</h4>
+                <h4>
+                  <Link
+                    href={`/${slugify(pop.kitchen)}`}
+                    className={s["pop-kitchen"]}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {pop.kitchen}
+                  </Link>
+                </h4>
                 <span className={s.dish}>{pop.dish}</span>
                 <div className={s["pop-price"]}>
                   ₹{pop.price} {pop.isDay && <small>/day</small>}
@@ -896,7 +1174,10 @@ export default function HomeScreen() {
                 <button
                   className={s["btn-reorder"]}
                   type="button"
-                  onClick={() => handleAddToCart({ id: `${pop.id}-${i}`, name: `${pop.dish} (${pop.kitchen})`, price: pop.price, tag: "Popular Pick", kitchen: pop.kitchen })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/${slugify(pop.kitchen)}`);
+                  }}
                 >
                   Reorder
                 </button>

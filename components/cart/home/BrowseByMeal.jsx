@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { meals } from "@/lib/data";
 import { useWishlist } from "@/lib/wishlist";
 
@@ -66,6 +67,37 @@ export default function BrowseByMeal() {
             <article className="meal-card" key={i}>
               <div className={`meal-card__media${m.shade ? " meal-card__media--shade" : ""}`}>
                 <img src={m.img} alt="" />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    zIndex: 2,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "4px 10px",
+                    background: "rgba(255, 255, 255, 0.75)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255, 255, 255, 0.65)",
+                    borderRadius: "999px",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: "#2b1210",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: "6px",
+                      height: "6px",
+                      borderRadius: "50%",
+                      backgroundColor: tabs[active]?.label === "Dinner" ? "#7a3ee3" : "#f57f2c",
+                    }}
+                  />
+                  {tabs[active]?.label || "Meal"}
+                </span>
                 <button
                   type="button"
                   className="meal-card__fav"
@@ -95,7 +127,11 @@ export default function BrowseByMeal() {
                     <b>8.7</b>
                   </span>
                 </div>
-                <p className="meal-card__kitchen">Meena&apos;s Tiffin</p>
+                <p className="meal-card__kitchen">
+                  <Link href="/partner-listing" style={{ color: "inherit", textDecoration: "none" }}>
+                    Meena&apos;s Tiffin
+                  </Link>
+                </p>
                 <div className="meal-card__bottom">
                   <span className="meal-card__price">{m.price}</span>
                   <button className="meal-card__add" type="button" aria-label={`Add ${m.name}`}>

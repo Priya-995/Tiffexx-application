@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { getInitialCart, saveCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { getKitchenBySlug } from "@/lib/kitchens";
 import s from "./PartnerListing.module.css";
 
 const CUISINES = [
@@ -329,13 +331,19 @@ const EXPLORE_KITCHENS = [
   { id: "k6", name: "Spice Route", cuisine: "Multi-Cuisine", plan: "Monthly · 30 meals", save: "Save 18%", price: 89, wasPrice: 109, img: "/assets/kitchen.png" },
 ];
 
-export default function PartnerListing() {
+export default function PartnerListing({ initialKitchen, slug }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const kitchenParam = slug || searchParams?.get("kitchen");
+  const kitchen = initialKitchen || getKitchenBySlug(kitchenParam || "ammas-kitchen");
+  const kitchenName = kitchen.name;
+
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   // Component state
   const [activeMealTab, setActiveMealTab] = useState("lunch");
   const [searchQuery, setSearchQuery] = useState("");
-  const [vegOnly, setVegOnly] = useState(true);
+  const [vegOnly, setVegOnly] = useState(kitchen.veg !== false);
   const [sortOrder, setSortOrder] = useState("Popular");
   const [planMeal, setPlanMeal] = useState("Lunch");
   const [savedKitchen, setSavedKitchen] = useState(false);
@@ -349,7 +357,7 @@ export default function PartnerListing() {
 
   const handleSaveKitchen = () => {
     setSavedKitchen((prev) => !prev);
-    showToast(!savedKitchen ? "✓ Saved Amma's Kitchen to favorites!" : "Removed Amma's Kitchen from favorites");
+    showToast(!savedKitchen ? `✓ Saved ${kitchenName} to favorites!` : `Removed ${kitchenName} from favorites`);
   };
 
   const handleShareKitchen = () => {
@@ -386,7 +394,7 @@ export default function PartnerListing() {
         sub: item.desc || "Daily home-style meal",
         perDay: item.price,
         qty: 1,
-        kitchen: "Amma's Kitchen",
+        kitchen: kitchenName,
         liked: false,
       });
     }
@@ -411,14 +419,14 @@ export default function PartnerListing() {
         sub: "Monthly · 30 meals",
         perDay: plan.price,
         qty: 1,
-        kitchen: "Amma's Kitchen",
+        kitchen: kitchenName,
         liked: false,
       });
     }
 
     const updated = { ...currentCart, items };
     saveCart(updated);
-    showToast(`✓ Subscribed to "${plan.title}"!`);
+    router.push("/cart?checkout=true");
   };
 
   const handleToggleWishlist = (plan) => {
@@ -426,7 +434,7 @@ export default function PartnerListing() {
       id: plan.id,
       name: plan.title,
       price: plan.price,
-      kitchen: "Amma's Kitchen",
+      kitchen: kitchenName,
       tag: plan.meal,
       img: plan.img,
     });
@@ -459,20 +467,20 @@ export default function PartnerListing() {
       <main className={s.main}>
         {/* Breadcrumb Navigation */}
         <nav className={s.breadcrumb} aria-label="Breadcrumb">
-          <Link href="/">Home</Link> › <Link href="/kitchens">Noida</Link> › <strong>Amma’s Kitchen</strong>
+          <Link href="/">Home</Link> › <Link href="/kitchens">Noida</Link> › <strong>{kitchenName}</strong>
         </nav>
 
         {/* Hero Section */}
         <section className={s.hero}>
-          <img className={s.hero__img} src="/assets/hero-dish.png" alt="Amma's Kitchen signature dish" />
+          <img className={s.hero__img} src={kitchen.heroImg || "/assets/hero-dish.png"} alt={`${kitchenName} signature dish`} />
           <div className={s.hero__chips}>
             <span className={`${s.chip} ${s["chip--green"]}`}>✓ Verified kitchen</span>
-            <span className={s.chip}>★ 4.6 Food</span>
-            <span className={s.chip}>4.4 Delivery</span>
-            <span className={s.chip}>● Open now</span>
+            <span className={s.chip}>★ {kitchen.foodRating || "4.6"} Food</span>
+            <span className={s.chip}>{kitchen.deliveryRating || "4.4"} Delivery</span>
+            <span className={s.chip}>{kitchen.open !== false ? "● Open now" : "● Closed"}</span>
           </div>
-          <p className={s.hero__eyebrow}>HOME-STYLE · NORTH INDIAN THALI</p>
-          <h1 className={s.hero__title}>Amma’s Kitchen</h1>
+          <p className={s.hero__eyebrow}>{kitchen.eyebrow || "HOME-STYLE · NORTH INDIAN THALI"}</p>
+          <h1 className={s.hero__title}>{kitchenName}</h1>
           <div className={s.hero__facts}>
             <span>Freshly prepared daily</span>
             <span>Wallet billing supported</span>
@@ -499,14 +507,14 @@ export default function PartnerListing() {
             <span className={s.stat__icon}>★</span>
             <div>
               <p className={s.stat__label}>RATING</p>
-              <p className={s.stat__value}>4.6 (12k+)</p>
+              <p className={s.stat__value}>{kitchen.rating || "4.6"} ({kitchen.reviews || "312"}+)</p>
             </div>
           </div>
           <div className={s.stat}>
             <span className={s.stat__icon}>₹</span>
             <div>
               <p className={s.stat__label}>AVG. PRICE</p>
-              <p className={s.stat__value}>₹120 / thali</p>
+              <p className={s.stat__value}>₹{kitchen.price || "99"} / meal</p>
             </div>
           </div>
           <div className={s.stat}>

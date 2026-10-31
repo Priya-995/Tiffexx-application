@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { popularPicks } from "@/lib/data";
+import { slugify } from "@/lib/kitchens";
 import PriceRow from "@/components/ui/PriceRow";
 
 export default function PopularPicks() {
@@ -10,7 +11,7 @@ export default function PopularPicks() {
           <h2 id="picks-title">Your Popular Picks</h2>
           <p>Daily tiffin on autopilot, picked from kitchens you&apos;ve ordered from</p>
         </div>
-        <Link className="link-all" href="/kitchens">
+        <Link className="link-all" href="/partner-listing">
           See all →
         </Link>
       </div>
@@ -23,11 +24,15 @@ export default function PopularPicks() {
             </div>
             <div className="pick__body">
               <p className="pick__cuisine">{p.cuisine}</p>
-              <h3 className="pick__name">{p.kitchen}</h3>
+              <h3 className="pick__name">
+                <Link href={`/${slugify(p.kitchen)}`} style={{ color: "inherit", textDecoration: "none" }}>
+                  {p.kitchen}
+                </Link>
+              </h3>
               <p className="pick__meta">{p.meta}</p>
               <PriceRow price={p.price} oldPrice={p.oldPrice} />
-              <Link className="pick__cta" href="/partner-listing">
-                Subscribe
+              <Link className="pick__cta" href={`/${slugify(p.kitchen)}`}>
+                Reorder
               </Link>
             </div>
           </article>

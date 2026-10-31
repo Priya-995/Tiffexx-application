@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   DEFAULT_ITEM,
   DATES,
@@ -20,6 +21,9 @@ import s from "./CartFlow.module.css";
 import SpinModal from "@/components/playzone/SpinModal";
 
 export default function CartFlow() {
+  const searchParams = useSearchParams();
+  const isCheckout = searchParams?.get("checkout") === "true";
+
   const [cart, setCart] = useState({
     items: [DEFAULT_ITEM],
     days: 7,
@@ -76,6 +80,19 @@ export default function CartFlow() {
     setUser(initialUser);
     if (initialUser && initialUser.phone) {
       setPhone(initialUser.phone);
+    }
+
+    if (isCheckout) {
+      const items = initialCart?.items || [];
+      if (items.length > 0) {
+        if (initialUser) {
+          setView("address");
+        } else {
+          setView("confirm");
+          setAuthOpen(true);
+          setShakeGate(true);
+        }
+      }
     }
 
     const onCartUpdated = (e) => {
@@ -136,6 +153,7 @@ export default function CartFlow() {
     }
     if ((targetView === "address" || targetView === "payment") && !user) {
       setView("confirm");
+      setAuthOpen(true);
       setTimeout(triggerGateShake, 100);
       return;
     }
@@ -933,11 +951,24 @@ export default function CartFlow() {
                 </button>
 
                 <p className={s.small} style={{ margin: "16px 0 0" }}>
-                  Don't have an account?{" "}
-                  <button className={s.lnk} onClick={() => addToast("Enter your mobile number to sign up.")}>
+                  Don&apos;t have an account?{" "}
+                  <Link className={s.lnk} href="/signup?redirect=/cart?checkout=true">
                     Sign up
-                  </button>
+                  </Link>
                 </p>
+                <div style={{ marginTop: "10px", textAlign: "center" }}>
+                  <Link
+                    href="/login?redirect=/cart?checkout=true"
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--brand-primary, #b3261e)",
+                      textDecoration: "underline",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Log in with email &amp; password
+                  </Link>
+                </div>
                 <div className={s.or}>or</div>
                 <button className={s.g} onClick={() => addToast("Google login coming soon.")}>
                   G

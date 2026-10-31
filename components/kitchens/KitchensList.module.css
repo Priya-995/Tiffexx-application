@@ -157,6 +157,14 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--orange-12);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.tile__name:hover {
+  color: #52110c;
+  text-decoration: underline;
 }
 
 .tile__about {
