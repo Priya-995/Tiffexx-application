@@ -1,17 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { plansForYou } from "@/lib/data";
 import { useWishlist } from "@/lib/wishlist";
-import { getInitialCart, saveCart } from "@/lib/cart";
+import { getInitialCart, saveCart, checkKitchenConflict } from "@/lib/cart";
 import PlanCard from "@/components/ui/PlanCard";
+import KitchenConflictModal from "@/components/cart/KitchenConflictModal";
 
 export default function PlansForYou({ title, subtitle, showSeeAll = true, onToast }) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const [conflictModal, setConflictModal] = useState({
+    isOpen: false,
+    currentKitchen: "",
+    newKitchen: "",
+    pendingPlan: null,
+  });
 
   const headingText =
     title || (isLoggedIn ? "Subscription plans for you" : "Plans for You");
@@ -23,12 +31,25 @@ export default function PlansForYou({ title, subtitle, showSeeAll = true, onToas
 
   const handleAddToCart = (plan) => {
     const currentCart = getInitialCart();
+    const planKitchen = plan.kitchen || "Perfect Kitchen";
+
+    const conflict = checkKitchenConflict(planKitchen, currentCart);
+    if (conflict.conflict) {
+      setConflictModal({
+        isOpen: true,
+        currentKitchen: conflict.currentKitchen,
+        newKitchen: conflict.newKitchen,
+        pendingPlan: plan,
+      });
+      return;
+    }
+
     const items = [...(currentCart.items || [])];
     const planName = plan.title || plan.name || "Lunch Plan";
     const existingIndex = items.findIndex((x) => String(x.id) === String(plan.id));
 
     if (existingIndex > -1) {
-      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 99);
     } else {
       items.push({
         id: plan.id,
@@ -37,12 +58,41 @@ export default function PlansForYou({ title, subtitle, showSeeAll = true, onToas
         sub: plan.descBold ? `${plan.descBold} ${plan.descLight || ""}` : "Daily home-style tiffin",
         perDay: plan.price || 89,
         qty: 1,
-        kitchen: plan.kitchen || "Perfect Kitchen",
+        kitchen: planKitchen,
         liked: true,
       });
     }
 
     saveCart({ ...currentCart, items });
+    router.push("/cart?checkout=true");
+  };
+
+  const handleResolveConflict = () => {
+    const plan = conflictModal.pendingPlan;
+    if (!plan) {
+      setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingPlan: null });
+      return;
+    }
+
+    const currentCart = getInitialCart();
+    const planKitchen = plan.kitchen || conflictModal.newKitchen || "Perfect Kitchen";
+    const planName = plan.title || plan.name || "Lunch Plan";
+
+    const resetItems = [
+      {
+        id: plan.id,
+        name: planName,
+        tag: "Plan",
+        sub: plan.descBold ? `${plan.descBold} ${plan.descLight || ""}` : "Daily home-style tiffin",
+        perDay: plan.price || 89,
+        qty: 1,
+        kitchen: planKitchen,
+        liked: true,
+      },
+    ];
+
+    saveCart({ ...currentCart, items: resetItems });
+    setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingPlan: null });
     router.push("/cart?checkout=true");
   };
 
@@ -112,6 +162,17 @@ export default function PlansForYou({ title, subtitle, showSeeAll = true, onToas
           />
         ))}
       </div>
+
+      {/* Kitchen Conflict Modal */}
+      <KitchenConflictModal
+        isOpen={conflictModal.isOpen}
+        currentKitchen={conflictModal.currentKitchen}
+        newKitchen={conflictModal.newKitchen}
+        onConfirm={handleResolveConflict}
+        onCancel={() =>
+          setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingPlan: null })
+        }
+      />
     </section>
   );
 }

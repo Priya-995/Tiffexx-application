@@ -11,7 +11,7 @@ export default function PlayZone() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState(0);
   const [spinState, setSpinState] = useState({ spinsAvailable: 1, streakDays: 3 });
-  const [walletBalance, setWalletBalance] = useState(350);
+  const [walletBalance, setWalletBalance] = useState(0);
 
   useEffect(() => {
     setSpinState(getSpinState());

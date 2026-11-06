@@ -15,8 +15,10 @@ import {
   saveStoredUser,
   calculatePrice,
   formatInr,
+  getCartKitchen,
   ORDERS_STORAGE_KEY,
 } from "@/lib/cart";
+import { deductWalletAmount } from "@/lib/wallet";
 import s from "./CartFlow.module.css";
 import SpinModal from "@/components/playzone/SpinModal";
 
@@ -137,6 +139,7 @@ export default function CartFlow() {
   }, []);
 
   const priceDetails = calculatePrice(cart.items, cart.days);
+  const cartKitchen = getCartKitchen(cart);
 
   const triggerGateShake = () => {
     setShakeGate(true);
@@ -334,13 +337,39 @@ export default function CartFlow() {
 
       try {
         const storedOrders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || "[]");
-        storedOrders.push({
+        const orderKitchen = getCartKitchen(cart) || cart.items[0]?.kitchen || "Amma's Kitchen";
+        const orderNames = cart.items.map((it) => `${it.name || "Meal"} × ${it.qty || 1}`).join(", ");
+        storedOrders.unshift({
+          id: `TX-${Math.floor(10000 + Math.random() * 90000)}`,
+          name: orderNames,
+          kitchen: orderKitchen,
+          date: new Date().toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+          status: "transit",
+          statusText: "Out for delivery",
+          total: `₹${priceDetails.total}`,
           items: cart.items,
-          total: priceDetails.total,
-          date: new Date().toISOString(),
+          details: {
+            items: orderNames,
+            subtotal: `₹${priceDetails.itemTotal}`,
+            delivery: priceDetails.delivery === 0 ? "FREE" : `₹${priceDetails.delivery}`,
+            payment: `Paid via ${methodNames[selectedPay] || selectedPay}`,
+          },
+          actions: ["track", "help"],
           paymentMethod: selectedPay,
         });
         localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(storedOrders));
+        if (selectedPay === "wallet") {
+          deductWalletAmount(priceDetails.total, `Meal Order (${orderKitchen})`, user);
+        }
+        window.dispatchEvent(new CustomEvent("tiffexx:order-placed"));
+        window.dispatchEvent(new Event("storage"));
       } catch (err) { }
 
       const clearedCart = { ...cart, items: [] };
@@ -494,7 +523,41 @@ export default function CartFlow() {
                   </button>
                 </div>
               ) : (
-                cart.items.map((item, idx) => (
+                <>
+                  {cartKitchen && (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "10px 16px",
+                        background: "#fbf6ec",
+                        border: "1px solid #ebd9bf",
+                        borderRadius: "12px",
+                        marginBottom: "16px",
+                        fontSize: "13px",
+                        color: "#52110c",
+                        fontWeight: "600",
+                      }}
+                    >
+                      <span>
+                        Ordering from: <b>{cartKitchen}</b>
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          color: "#6b5551",
+                          background: "#ffffff",
+                          padding: "3px 8px",
+                          borderRadius: "999px",
+                          border: "1px solid #e2d2c3",
+                        }}
+                      >
+                        Single-kitchen order
+                      </span>
+                    </div>
+                  )}
+                  {cart.items.map((item, idx) => (
                   <div key={item.id + idx} className={s.cartCard}>
                     {/* LEFT: item info */}
                     <div className={s.meta}>
@@ -530,8 +593,9 @@ export default function CartFlow() {
                       </button>
                     </div>
                   </div>
-                ))
-              )}
+                ))}
+              </>
+            )}
             </section>
           )}
 

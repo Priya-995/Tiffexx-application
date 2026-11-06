@@ -495,6 +495,38 @@ button:disabled {
   border-radius: 3px;
 }
 
+.icon-btn__badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--brand-primary, #b3261e);
+  color: #ffffff;
+  font-family: var(--font-body, inherit);
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+  line-height: 1;
+  pointer-events: none;
+  animation: badgePop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .avatar {
   width: 36px;
   height: 36px;
@@ -1909,22 +1941,51 @@ button:disabled {
   margin: 0 auto;
   padding: 0 28px 36px;
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1fr;
-  gap: 36px;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer__brand {
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 14px;
 }
 
 .footer__brand p {
-  max-width: 230px;
+  max-width: 320px;
   font-size: 13.5px;
-  line-height: 21.6px;
+  line-height: 22px;
   color: #c2af9f;
+  margin: 0;
+}
+
+.footer__socials {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.footer__social-link {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e6d9cc;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.footer__social-link:hover {
+  background: #ffca0f;
+  border-color: #ffca0f;
+  color: #2b1210;
+  transform: translateY(-2px);
 }
 
 .footer__col {
@@ -1963,12 +2024,38 @@ button:disabled {
   margin: 0 auto;
   padding: 22px 28px 0;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
   font: 400 12.5px var(--font-work);
-  color: #9c8a7b;
+}
+
+.footer__bottom-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer__fssai {
+  font-size: 13px;
+  color: #a89688;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.footer__copyright {
+  font-size: 12.5px;
+  color: #8c7a6c;
+  margin: 0;
+}
+
+.footer__made-in-india {
+  font-size: 13.5px;
+  color: #c2af9f;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 /* ==========================================================

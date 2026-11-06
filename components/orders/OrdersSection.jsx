@@ -1,115 +1,48 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import { getAllUserOrders } from "@/lib/orders";
 import ProfileLayout from "@/components/profile/ProfileLayout";
 import s from "./OrdersSection.module.css";
-
-const ORDERS_DATA = [
-  {
-    id: "TX-10501",
-    name: "Paneer Thali × 1",
-    kitchen: "Amma’s Kitchen",
-    date: "28 Oct 2026, 12:05 pm",
-    status: "transit",
-    statusText: "Out for delivery",
-    total: "₹129",
-    details: {
-      items: "1× Shahi Paneer, 4× Whole Wheat Phulkas, Steamed Rice, Dal & Salad",
-      subtotal: "₹119",
-      delivery: "₹10",
-      payment: "Paid via Tiffexx Wallet",
-    },
-    actions: ["track", "help"],
-  },
-  {
-    id: "TX-10482",
-    name: "Home-style Veg Thali × 1",
-    kitchen: "Amma’s Kitchen",
-    date: "27 Oct 2026, 12:10 pm",
-    status: "delivered",
-    statusText: "Delivered",
-    total: "₹129",
-    details: {
-      items: "1× Dal Tadka, Seasonal Mix Veg Sabzi, 4× Phulkas, Jeera Rice, Curd",
-      subtotal: "₹119",
-      delivery: "₹10",
-      payment: "Paid via UPI",
-    },
-    actions: ["track", "help"],
-  },
-  {
-    id: "TX-10463",
-    name: "Kadhi Chawal Box × 1",
-    kitchen: "Shree Rasoi",
-    date: "26 Oct 2026, 12:20 pm",
-    status: "delivered",
-    statusText: "Delivered",
-    total: "₹129",
-    details: {
-      items: "Punjabi Pakora Kadhi (350ml), Steamed Basmati Rice, Roasted Papad",
-      subtotal: "₹119",
-      delivery: "₹10",
-      payment: "Paid via Tiffexx Wallet",
-    },
-    actions: ["reorder", "help"],
-  },
-  {
-    id: "TX-10431",
-    name: "Dal Tadka Combo × 2",
-    kitchen: "Mom’s Flavour",
-    date: "25 Oct 2026, 12:00 pm",
-    status: "delivered",
-    statusText: "Delivered",
-    total: "₹129",
-    details: {
-      items: "2× Yellow Dal Tadka, 8× Phulkas, Pickle & Onion salad",
-      subtotal: "₹119",
-      delivery: "₹10",
-      payment: "Paid via Credit Card",
-    },
-    actions: ["reorder", "help"],
-  },
-  {
-    id: "TX-10290",
-    name: "Rajma Chawal Box × 1",
-    kitchen: "Punjabi Rasoi",
-    date: "18 Oct 2026, 11:45 am",
-    status: "cancelled",
-    statusText: "Cancelled",
-    total: "₹99",
-    details: {
-      items: "Order cancelled by customer before kitchen preparation.",
-      subtotal: "₹99",
-      delivery: "₹0",
-      payment: "Refunded to Tiffexx Wallet",
-    },
-    actions: ["reorder-outline", "refund"],
-  },
-];
 
 export default function OrdersSection() {
   const router = useRouter();
   const { user, logout } = useAuth();
 
+  const [ordersList, setOrdersList] = useState([]);
   const [activeFilter, setActiveFilter] = useState("all"); // "all" | "active" | "delivered" | "cancelled"
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [trackingOrder, setTrackingOrder] = useState(null);
   const [olderOrdersLoaded, setOlderOrdersLoaded] = useState(false);
 
+  useEffect(() => {
+    setOrdersList(getAllUserOrders());
+
+    const handleSync = () => {
+      setOrdersList(getAllUserOrders());
+    };
+    window.addEventListener("tiffexx:order-placed", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("tiffexx:order-placed", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 3500);
   };
 
-  const displayName = user?.name || "Ananya Rao";
+  const displayName = user?.name || "User";
   const displayPhone = user?.phone || "+91 98XXX XXX10";
 
   const getInitials = (name) => {
-    if (!name) return "AR";
+    if (!name) return "U";
     const parts = name.trim().split(" ");
     if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
     return name.slice(0, 2).toUpperCase();
@@ -122,7 +55,7 @@ export default function OrdersSection() {
 
   // Filtered orders
   const filteredOrders = useMemo(() => {
-    return ORDERS_DATA.filter((order) => {
+    return ordersList.filter((order) => {
       // Filter tab
       if (activeFilter === "active" && order.status !== "transit") return false;
       if (activeFilter === "delivered" && order.status !== "delivered") return false;

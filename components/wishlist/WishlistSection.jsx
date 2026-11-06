@@ -4,15 +4,22 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useWishlist } from "@/lib/wishlist";
-import { getInitialCart, saveCart } from "@/lib/cart";
+import { getInitialCart, saveCart, checkKitchenConflict } from "@/lib/cart";
 import PlansForYou from "@/components/cart/home/PlansForYou";
 import PlanCard from "@/components/ui/PlanCard";
+import KitchenConflictModal from "@/components/cart/KitchenConflictModal";
 import s from "./WishlistSection.module.css";
 
 export default function WishlistSection() {
   const router = useRouter();
   const { wishlistItems, count, removeFromWishlist, isLoaded } = useWishlist();
   const [toastMessage, setToastMessage] = useState("");
+  const [conflictModal, setConflictModal] = useState({
+    isOpen: false,
+    currentKitchen: "",
+    newKitchen: "",
+    pendingItem: null,
+  });
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -21,6 +28,19 @@ export default function WishlistSection() {
 
   const handleAddToCart = (item) => {
     const currentCart = getInitialCart();
+    const itemKitchen = item.kitchen || "Perfect Kitchen";
+
+    const conflict = checkKitchenConflict(itemKitchen, currentCart);
+    if (conflict.conflict) {
+      setConflictModal({
+        isOpen: true,
+        currentKitchen: conflict.currentKitchen,
+        newKitchen: conflict.newKitchen,
+        pendingItem: item,
+      });
+      return;
+    }
+
     const items = [...(currentCart.items || [])];
     const planName = item.title || item.name || "Lunch Plan";
     const existingIndex = items.findIndex(
@@ -28,7 +48,7 @@ export default function WishlistSection() {
     );
 
     if (existingIndex > -1) {
-      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 99);
     } else {
       items.push({
         id: item.id,
@@ -39,13 +59,45 @@ export default function WishlistSection() {
           : (item.desc || "Daily home-style tiffin"),
         perDay: item.price ? Number(String(item.price).replace(/[^\d]/g, "")) : 89,
         qty: 1,
-        kitchen: item.kitchen || "Perfect Kitchen",
+        kitchen: itemKitchen,
         liked: true,
       });
     }
 
     const updated = { ...currentCart, items };
     saveCart(updated);
+    router.push("/cart?checkout=true");
+  };
+
+  const handleResolveConflict = () => {
+    const item = conflictModal.pendingItem;
+    if (!item) {
+      setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null });
+      return;
+    }
+
+    const currentCart = getInitialCart();
+    const itemKitchen = item.kitchen || conflictModal.newKitchen || "Perfect Kitchen";
+    const planName = item.title || item.name || "Lunch Plan";
+
+    const resetItems = [
+      {
+        id: item.id,
+        name: planName,
+        tag: "Plan",
+        sub: item.descBold
+          ? `${item.descBold} ${item.descLight || ""}`
+          : (item.desc || "Daily home-style tiffin"),
+        perDay: item.price ? Number(String(item.price).replace(/[^\d]/g, "")) : 89,
+        qty: 1,
+        kitchen: itemKitchen,
+        liked: true,
+      },
+    ];
+
+    const updated = { ...currentCart, items: resetItems };
+    saveCart(updated);
+    setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null });
     router.push("/cart?checkout=true");
   };
 
@@ -122,6 +174,17 @@ export default function WishlistSection() {
 
         {/* Toast Notification */}
         {toastMessage && <div className={s.toast}>{toastMessage}</div>}
+
+        {/* Kitchen Conflict Modal */}
+        <KitchenConflictModal
+          isOpen={conflictModal.isOpen}
+          currentKitchen={conflictModal.currentKitchen}
+          newKitchen={conflictModal.newKitchen}
+          onConfirm={handleResolveConflict}
+          onCancel={() =>
+            setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null })
+          }
+        />
       </div>
     </div>
   );

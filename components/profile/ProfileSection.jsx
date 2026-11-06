@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
+import { useAuth, setStoredUser } from "@/lib/auth";
+import { getStoredWalletBalance } from "@/lib/wallet";
+import { updateUserNameInAddresses } from "@/lib/addresses";
 import ProfileLayout from "./ProfileLayout";
 import s from "./ProfileSection.module.css";
 
@@ -14,8 +16,8 @@ export default function ProfileSection() {
   // User Profile Data & Edit States
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: user?.name || "Ananya Rao",
-    email: user?.email || "ananya.rao@example.com",
+    name: user?.name || "User",
+    email: user?.email || "user@example.com",
     phone: user?.phone || "+91 98XXX XXX10",
     dob: "14 July 1994",
     gender: "Female",
@@ -24,6 +26,23 @@ export default function ProfileSection() {
 
   // Edit form buffer
   const [editForm, setEditForm] = useState({ ...profileData });
+
+  useEffect(() => {
+    if (user) {
+      setProfileData((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+      }));
+      setEditForm((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+      }));
+    }
+  }, [user]);
 
   // Preferences States
   const [prefs, setPrefs] = useState({
@@ -38,6 +57,23 @@ export default function ProfileSection() {
 
   // Toast feedback
   const [toastMessage, setToastMessage] = useState("");
+  const [walletBalance, setWalletBalance] = useState(0);
+
+  useEffect(() => {
+    const updateBalance = () => {
+      setWalletBalance(isLoggedIn && user ? getStoredWalletBalance(user) : 0);
+    };
+
+    updateBalance();
+
+    const handleUpdate = () => updateBalance();
+    window.addEventListener("tiffexx:wallet-updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("tiffexx:wallet-updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, [isLoggedIn, user]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -57,6 +93,16 @@ export default function ProfileSection() {
     e.preventDefault();
     setProfileData({ ...editForm });
     setIsEditing(false);
+
+    const updatedUser = {
+      ...(user || {}),
+      name: editForm.name,
+      phone: editForm.phone,
+      email: editForm.email,
+    };
+    setStoredUser(updatedUser);
+    updateUserNameInAddresses(editForm.name, updatedUser);
+
     showToast("✓ Profile information updated successfully!");
   };
 
@@ -126,7 +172,7 @@ export default function ProfileSection() {
             </div>
             <div className={s.stat}>
               <dt className={s.stat__label}>Wallet</dt>
-              <dd className={s.stat__value}>₹25</dd>
+              <dd className={s.stat__value}>₹{Math.round(walletBalance)}</dd>
             </div>
           </dl>
         </section>

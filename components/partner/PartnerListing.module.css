@@ -664,6 +664,67 @@
   height: 16px;
 }
 
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 86px;
+  height: 32px;
+  background: #ffffff;
+  border: 1.5px solid var(--brand, #b3261e);
+  border-radius: 16px;
+  padding: 0 4px;
+  box-shadow: 0 2px 8px rgba(179, 38, 30, 0.15);
+  box-sizing: border-box;
+  user-select: none;
+  flex-shrink: 0;
+  animation: stepperPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qty-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: transparent;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand, #b3261e);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.qty-btn:hover {
+  background: #fdf1f0;
+  transform: scale(1.1);
+}
+
+.qty-btn:active {
+  transform: scale(0.92);
+}
+
+.qty-val {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #2b1210;
+  min-width: 16px;
+  text-align: center;
+}
+
+@keyframes stepperPop {
+  0% {
+    transform: scale(0.85);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* ---- Special menu (14:9838) ---- */
 .special {
   padding: 20px;

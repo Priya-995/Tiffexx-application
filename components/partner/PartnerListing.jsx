@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { getInitialCart, saveCart } from "@/lib/cart";
+import { getInitialCart, saveCart, checkKitchenConflict } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { getKitchenBySlug } from "@/lib/kitchens";
+import KitchenConflictModal from "@/components/cart/KitchenConflictModal";
 import s from "./PartnerListing.module.css";
 
 const CUISINES = [
@@ -349,6 +350,33 @@ export default function PartnerListing({ initialKitchen, slug }) {
   const [savedKitchen, setSavedKitchen] = useState(false);
   const [likedReviewMap, setLikedReviewMap] = useState({});
   const [toastMessage, setToastMessage] = useState("");
+  const [cartItems, setCartItems] = useState([]);
+
+  // Kitchen Conflict Modal state
+  const [conflictModal, setConflictModal] = useState({
+    isOpen: false,
+    currentKitchen: "",
+    newKitchen: "",
+    pendingItem: null,
+    actionType: "add", // 'add' | 'subscribe'
+  });
+
+  // Sync cart items from localStorage and global cart updates
+  useEffect(() => {
+    try {
+      const initCart = getInitialCart();
+      setCartItems(initCart?.items || []);
+    } catch (e) {}
+
+    const onCartUpdated = (e) => {
+      setCartItems(e.detail?.items || []);
+    };
+
+    window.addEventListener("tiffexx:cart-updated", onCartUpdated);
+    return () => {
+      window.removeEventListener("tiffexx:cart-updated", onCartUpdated);
+    };
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -381,11 +409,26 @@ export default function PartnerListing({ initialKitchen, slug }) {
 
   const handleAddToCart = (item) => {
     const currentCart = getInitialCart();
+    const itemKitchen = kitchenName || "Tiffexx Kitchen";
+
+    // Enforce single-kitchen constraint
+    const conflict = checkKitchenConflict(itemKitchen, currentCart);
+    if (conflict.conflict) {
+      setConflictModal({
+        isOpen: true,
+        currentKitchen: conflict.currentKitchen,
+        newKitchen: conflict.newKitchen,
+        pendingItem: item,
+        actionType: "add",
+      });
+      return;
+    }
+
     const items = [...(currentCart.items || [])];
     const existingIndex = items.findIndex((x) => x.id === item.id || x.name === item.name);
 
     if (existingIndex > -1) {
-      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 99);
     } else {
       items.push({
         id: item.id,
@@ -394,7 +437,7 @@ export default function PartnerListing({ initialKitchen, slug }) {
         sub: item.desc || "Daily home-style meal",
         perDay: item.price,
         qty: 1,
-        kitchen: kitchenName,
+        kitchen: itemKitchen,
         liked: false,
       });
     }
@@ -404,22 +447,75 @@ export default function PartnerListing({ initialKitchen, slug }) {
     showToast(`✓ Added "${item.name}" to cart!`);
   };
 
+  const handleUpdateQty = (item, delta) => {
+    const currentCart = getInitialCart();
+    const itemKitchen = kitchenName || "Tiffexx Kitchen";
+
+    if (delta > 0) {
+      const conflict = checkKitchenConflict(itemKitchen, currentCart);
+      if (conflict.conflict) {
+        setConflictModal({
+          isOpen: true,
+          currentKitchen: conflict.currentKitchen,
+          newKitchen: conflict.newKitchen,
+          pendingItem: item,
+          actionType: "add",
+        });
+        return;
+      }
+    }
+
+    const items = [...(currentCart.items || [])];
+    const idx = items.findIndex((x) => x.id === item.id || x.name === item.name);
+
+    if (idx === -1) {
+      if (delta > 0) handleAddToCart(item);
+      return;
+    }
+
+    const newQty = (items[idx].qty || 1) + delta;
+    if (newQty <= 0) {
+      const removed = items.splice(idx, 1)[0];
+      showToast(`Removed "${removed.name}" from cart.`);
+    } else {
+      items[idx].qty = Math.min(newQty, 99);
+    }
+
+    const updated = { ...currentCart, items };
+    saveCart(updated);
+  };
+
   const handleSubscribePlan = (plan) => {
     const currentCart = getInitialCart();
+    const itemKitchen = kitchenName || "Tiffexx Kitchen";
+
+    const conflict = checkKitchenConflict(itemKitchen, currentCart);
+    if (conflict.conflict) {
+      setConflictModal({
+        isOpen: true,
+        currentKitchen: conflict.currentKitchen,
+        newKitchen: conflict.newKitchen,
+        pendingItem: plan,
+        actionType: "subscribe",
+      });
+      return;
+    }
+
     const items = [...(currentCart.items || [])];
-    const existingIndex = items.findIndex((x) => x.id === plan.id || x.name === plan.title);
+    const planTitle = plan.title || plan.name || "Lunch Plan";
+    const existingIndex = items.findIndex((x) => x.id === plan.id || x.name === planTitle);
 
     if (existingIndex > -1) {
-      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 99);
     } else {
       items.push({
         id: plan.id,
-        name: plan.title,
-        tag: plan.meal,
+        name: planTitle,
+        tag: plan.meal || "Lunch Plan",
         sub: "Monthly · 30 meals",
-        perDay: plan.price,
+        perDay: plan.price ? Number(String(plan.price).replace(/[^\d]/g, "")) : 89,
         qty: 1,
-        kitchen: kitchenName,
+        kitchen: itemKitchen,
         liked: false,
       });
     }
@@ -427,6 +523,56 @@ export default function PartnerListing({ initialKitchen, slug }) {
     const updated = { ...currentCart, items };
     saveCart(updated);
     router.push("/cart?checkout=true");
+  };
+
+  const handleResolveConflict = () => {
+    const item = conflictModal.pendingItem;
+    if (!item) {
+      setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" });
+      return;
+    }
+
+    const currentCart = getInitialCart();
+    const itemKitchen = kitchenName || conflictModal.newKitchen || "Tiffexx Kitchen";
+
+    if (conflictModal.actionType === "subscribe") {
+      const planTitle = item.title || item.name || "Lunch Plan";
+      const resetItems = [
+        {
+          id: item.id,
+          name: planTitle,
+          tag: item.meal || "Lunch Plan",
+          sub: "Monthly · 30 meals",
+          perDay: item.price ? Number(String(item.price).replace(/[^\d]/g, "")) : 89,
+          qty: 1,
+          kitchen: itemKitchen,
+          liked: false,
+        },
+      ];
+      const updated = { ...currentCart, items: resetItems };
+      saveCart(updated);
+      setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" });
+      router.push("/cart?checkout=true");
+      return;
+    }
+
+    const resetItems = [
+      {
+        id: item.id,
+        name: item.name,
+        tag: item.meal === "dinner" ? "Dinner" : item.meal === "breakfast" ? "Breakfast" : "Lunch",
+        sub: item.desc || "Daily home-style meal",
+        perDay: item.price,
+        qty: 1,
+        kitchen: itemKitchen,
+        liked: false,
+      },
+    ];
+
+    const updated = { ...currentCart, items: resetItems };
+    saveCart(updated);
+    setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" });
+    showToast(`✓ Cart updated: Now ordering from ${itemKitchen}!`);
   };
 
   const handleToggleWishlist = (plan) => {
@@ -676,15 +822,44 @@ export default function PartnerListing({ initialKitchen, slug }) {
                       </span>
                     </div>
                   </div>
-                  <button
-                    className={s["menu-card__more"]}
-                    aria-label={`Add ${item.name} to cart`}
-                    type="button"
-                    onClick={() => handleAddToCart(item)}
-                    title="Add to cart"
-                  >
-                    <img src="/assets/icon-overflow.svg" alt="" width="16" height="16" />
-                  </button>
+                  {(() => {
+                    const inCart = cartItems.find((x) => x.id === item.id || x.name === item.name);
+                    const itemQty = inCart ? (Number(inCart.qty) || 1) : 0;
+                    if (itemQty > 0) {
+                      return (
+                        <div className={s["qty-stepper"]} onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className={s["qty-btn"]}
+                            aria-label={`Decrease ${item.name} quantity`}
+                            onClick={() => handleUpdateQty(item, -1)}
+                          >
+                            −
+                          </button>
+                          <span className={s["qty-val"]}>{itemQty}</span>
+                          <button
+                            type="button"
+                            className={s["qty-btn"]}
+                            aria-label={`Increase ${item.name} quantity`}
+                            onClick={() => handleUpdateQty(item, 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      );
+                    }
+                    return (
+                      <button
+                        className={s["menu-card__more"]}
+                        aria-label={`Add ${item.name} to cart`}
+                        type="button"
+                        onClick={() => handleAddToCart(item)}
+                        title="Add to cart"
+                      >
+                        <img src="/assets/icon-overflow.svg" alt="" width="16" height="16" />
+                      </button>
+                    );
+                  })()}
                 </article>
               ))}
               {filteredMenuItems.length === 0 && (
@@ -716,14 +891,43 @@ export default function PartnerListing({ initialKitchen, slug }) {
                     <h3 className={s["special-card__name"]}>{sp.name}</h3>
                     <p className={s["special-card__meta"]}>{sp.meta}</p>
                   </div>
-                  <button
-                    className={s["special-card__add"]}
-                    aria-label={`Add ${sp.name}`}
-                    type="button"
-                    onClick={() => handleAddToCart({ id: sp.id, name: sp.name, price: sp.price, tag: "Special" })}
-                  >
-                    <img className={sp.wide ? s.w120 : ""} src={sp.btnImg} alt="" height="30" />
-                  </button>
+                  {(() => {
+                    const inCart = cartItems.find((x) => x.id === sp.id || x.name === sp.name);
+                    const spQty = inCart ? (Number(inCart.qty) || 1) : 0;
+                    if (spQty > 0) {
+                      return (
+                        <div className={s["qty-stepper"]} onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className={s["qty-btn"]}
+                            aria-label={`Decrease ${sp.name} quantity`}
+                            onClick={() => handleUpdateQty({ id: sp.id, name: sp.name, price: sp.price, tag: "Special" }, -1)}
+                          >
+                            −
+                          </button>
+                          <span className={s["qty-val"]}>{spQty}</span>
+                          <button
+                            type="button"
+                            className={s["qty-btn"]}
+                            aria-label={`Increase ${sp.name} quantity`}
+                            onClick={() => handleUpdateQty({ id: sp.id, name: sp.name, price: sp.price, tag: "Special" }, 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      );
+                    }
+                    return (
+                      <button
+                        className={s["special-card__add"]}
+                        aria-label={`Add ${sp.name}`}
+                        type="button"
+                        onClick={() => handleAddToCart({ id: sp.id, name: sp.name, price: sp.price, tag: "Special" })}
+                      >
+                        <img className={sp.wide ? s.w120 : ""} src={sp.btnImg} alt="" height="30" />
+                      </button>
+                    );
+                  })()}
                 </article>
               ))}
             </div>
@@ -957,6 +1161,17 @@ export default function PartnerListing({ initialKitchen, slug }) {
 
       {/* Interactive feedback toast */}
       {toastMessage && <div className={s.toast}>{toastMessage}</div>}
+
+      {/* Kitchen Conflict Modal */}
+      <KitchenConflictModal
+        isOpen={conflictModal.isOpen}
+        currentKitchen={conflictModal.currentKitchen}
+        newKitchen={conflictModal.newKitchen}
+        onConfirm={handleResolveConflict}
+        onCancel={() =>
+          setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" })
+        }
+      />
     </div>
   );
 }

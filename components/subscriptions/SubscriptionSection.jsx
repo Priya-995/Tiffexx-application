@@ -43,11 +43,11 @@ export default function SubscriptionSection() {
     setTimeout(() => setToastMessage(""), 3000);
   };
 
-  const displayName = user?.name || "Ananya Rao";
+  const displayName = user?.name || "User";
   const displayPhone = user?.phone || "+91 98XXX XXX10";
 
   const getInitials = (name) => {
-    if (!name) return "AR";
+    if (!name) return "U";
     const parts = name.trim().split(" ");
     if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
     return name.slice(0, 2).toUpperCase();

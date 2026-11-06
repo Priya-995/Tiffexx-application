@@ -1,69 +1,23 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import {
+  getSavedAddresses,
+  saveSavedAddresses,
+  setActiveAddressId,
+} from "@/lib/addresses";
 import ProfileLayout from "@/components/profile/ProfileLayout";
 import s from "./AddressesSection.module.css";
-
-const INITIAL_ADDRESSES = [
-  {
-    id: "addr-1",
-    type: "home",
-    title: "Home",
-    isDefault: true,
-    name: "Ananya Rao",
-    phone: "+91 98XXX XXX10",
-    line1: "Flat 402, Sunshine Residency",
-    line2: "12th Main Road, Sector 62",
-    landmark: "Opposite City Park Metro",
-    city: "Noida",
-    state: "Uttar Pradesh",
-    pincode: "201301",
-    instructions: "Leave at door, ring bell once.",
-    icon: "/assets/icon-home.svg",
-  },
-  {
-    id: "addr-2",
-    type: "work",
-    title: "Work",
-    isDefault: false,
-    name: "Ananya Rao",
-    phone: "+91 98XXX XXX10",
-    line1: "Tower B, 6th Floor, Cyber City Tech Park",
-    line2: "Sector 63",
-    landmark: "Near Electronic City Metro",
-    city: "Noida",
-    state: "Uttar Pradesh",
-    pincode: "201309",
-    instructions: "Leave with building reception.",
-    icon: "/assets/icon-work.svg",
-  },
-  {
-    id: "addr-3",
-    type: "other",
-    title: "Other",
-    isDefault: false,
-    name: "Ananya Rao",
-    phone: "+91 98XXX XXX10",
-    line1: "Villa 14, Green Meadows",
-    line2: "Expressway Phase 2",
-    landmark: "Near Knowledge Park II",
-    city: "Greater Noida",
-    state: "Uttar Pradesh",
-    pincode: "201310",
-    instructions: "",
-    icon: "/assets/icon-pin.svg",
-  },
-];
 
 export default function AddressesSection() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const formRef = useRef(null);
 
-  const [addresses, setAddresses] = useState(INITIAL_ADDRESSES);
+  const [addresses, setAddresses] = useState([]);
   const [toastMessage, setToastMessage] = useState("");
   const [showAreasModal, setShowAreasModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -83,16 +37,20 @@ export default function AddressesSection() {
     isDefault: false,
   });
 
+  useEffect(() => {
+    setAddresses(getSavedAddresses(user));
+  }, [user]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 3500);
   };
 
-  const displayName = user?.name || "Ananya Rao";
+  const displayName = user?.name || "User";
   const displayPhone = user?.phone || "+91 98XXX XXX10";
 
   const getInitials = (name) => {
-    if (!name) return "AR";
+    if (!name) return "U";
     const parts = name.trim().split(" ");
     if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
     return name.slice(0, 2).toUpperCase();
@@ -112,14 +70,16 @@ export default function AddressesSection() {
   };
 
   const handleSetDefault = (id) => {
-    setAddresses((prev) =>
-      prev.map((addr) => ({
-        ...addr,
-        isDefault: addr.id === id,
-      }))
-    );
+    const updated = addresses.map((addr) => ({
+      ...addr,
+      isDefault: addr.id === id,
+    }));
+    setAddresses(updated);
+    saveSavedAddresses(updated, user);
+    setActiveAddressId(id, user);
+
     const target = addresses.find((a) => a.id === id);
-    showToast(`Default address set to "${target?.title || "selected"}".`);
+    showToast(`Default address set to "${target?.title || target?.tag || "selected"}".`);
   };
 
   const handleRemove = (id) => {
@@ -131,23 +91,25 @@ export default function AddressesSection() {
     const remaining = addresses.filter((a) => a.id !== id);
     if (toRemove?.isDefault && remaining.length > 0) {
       remaining[0].isDefault = true;
+      setActiveAddressId(remaining[0].id, user);
     }
     setAddresses(remaining);
-    showToast(`Address "${toRemove?.title}" removed.`);
+    saveSavedAddresses(remaining, user);
+    showToast(`Address "${toRemove?.title || toRemove?.tag || "Delivery address"}" removed.`);
   };
 
   const handleEdit = (addr) => {
     setEditingId(addr.id);
     setFormType(addr.type || "home");
     setFormData({
-      name: addr.name || "",
-      phone: addr.phone ? addr.phone.replace(/^Phone:\s*/, "") : "",
-      line1: addr.line1 || "",
+      name: addr.name || user?.name || "",
+      phone: addr.phone ? addr.phone.replace(/^Phone:\s*/, "") : (user?.phone || ""),
+      line1: addr.line1 || addr.shortAddress || "",
       line2: addr.line2 || "",
       landmark: addr.landmark || "",
       pincode: addr.pincode || "",
-      city: addr.city || "",
-      state: addr.state || "",
+      city: addr.city || "Noida",
+      state: addr.state || "Uttar Pradesh",
       instructions: addr.instructions || "",
       isDefault: addr.isDefault || false,
     });
@@ -171,6 +133,12 @@ export default function AddressesSection() {
     setFormType("home");
   };
 
+  const getAddressIcon = (icon) => {
+    if (icon === "home" || icon === "/assets/icon-home.svg") return "/assets/icon-home.svg";
+    if (icon === "building" || icon === "work" || icon === "/assets/icon-work.svg") return "/assets/icon-work.svg";
+    return "/assets/icon-pin.svg";
+  };
+
   const handleSaveForm = (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim() || !formData.line1.trim() || !formData.pincode.trim()) {
@@ -178,70 +146,86 @@ export default function AddressesSection() {
       return;
     }
 
-    const iconMap = {
-      home: "/assets/icon-home.svg",
-      work: "/assets/icon-work.svg",
-      other: "/assets/icon-pin.svg",
-    };
-
     const titleMap = {
       home: "Home",
       work: "Work",
       other: "Other",
     };
 
+    const iconType = formType === "work" ? "building" : formType === "home" ? "home" : "pin";
+    const line1 = formData.line1.trim();
+    const line2 = formData.line2.trim();
+    const city = formData.city.trim() || "Noida";
+    const fullAddress = [line1, line2, city, formData.pincode.trim()].filter(Boolean).join(", ");
+    const shortAddress = line1;
+
+    let updatedList;
+
     if (editingId) {
-      setAddresses((prev) =>
-        prev.map((a) => {
-          if (a.id === editingId) {
-            return {
-              ...a,
-              type: formType,
-              title: titleMap[formType] || "Address",
-              icon: iconMap[formType] || "/assets/icon-home.svg",
-              name: formData.name.trim(),
-              phone: `Phone: ${formData.phone.trim()}`,
-              line1: formData.line1.trim(),
-              line2: formData.line2.trim(),
-              landmark: formData.landmark.trim(),
-              pincode: formData.pincode.trim(),
-              city: formData.city.trim() || "Noida",
-              state: formData.state.trim() || "Uttar Pradesh",
-              instructions: formData.instructions.trim(),
-              isDefault: formData.isDefault ? true : a.isDefault,
-            };
-          }
-          if (formData.isDefault) {
-            return { ...a, isDefault: false };
-          }
-          return a;
-        })
-      );
+      updatedList = addresses.map((a) => {
+        if (a.id === editingId) {
+          return {
+            ...a,
+            type: formType,
+            tag: formType.toUpperCase(),
+            title: titleMap[formType] || "Address",
+            icon: iconType,
+            name: formData.name.trim(),
+            phone: formData.phone.trim(),
+            line1,
+            line2,
+            landmark: formData.landmark.trim(),
+            pincode: formData.pincode.trim(),
+            city,
+            state: formData.state.trim() || "Uttar Pradesh",
+            instructions: formData.instructions.trim(),
+            fullAddress,
+            shortAddress,
+            isDefault: formData.isDefault ? true : a.isDefault,
+          };
+        }
+        if (formData.isDefault) {
+          return { ...a, isDefault: false };
+        }
+        return a;
+      });
+      setAddresses(updatedList);
+      saveSavedAddresses(updatedList, user);
+      if (formData.isDefault) {
+        setActiveAddressId(editingId, user);
+      }
       showToast("Address updated successfully!");
     } else {
+      const newId = `addr-${Date.now()}`;
       const newAddress = {
-        id: `addr-${Date.now()}`,
+        id: newId,
         type: formType,
+        tag: formType.toUpperCase(),
         title: titleMap[formType] || "Address",
-        icon: iconMap[formType] || "/assets/icon-home.svg",
+        icon: iconType,
         name: formData.name.trim(),
-        phone: `Phone: ${formData.phone.trim()}`,
-        line1: formData.line1.trim(),
-        line2: formData.line2.trim(),
+        phone: formData.phone.trim(),
+        line1,
+        line2,
         landmark: formData.landmark.trim(),
         pincode: formData.pincode.trim(),
-        city: formData.city.trim() || "Noida",
+        city,
         state: formData.state.trim() || "Uttar Pradesh",
         instructions: formData.instructions.trim(),
+        fullAddress,
+        shortAddress,
         isDefault: formData.isDefault || addresses.length === 0,
       };
 
-      setAddresses((prev) => {
-        if (formData.isDefault) {
-          return [newAddress, ...prev.map((a) => ({ ...a, isDefault: false }))];
-        }
-        return [...prev, newAddress];
-      });
+      if (formData.isDefault || addresses.length === 0) {
+        updatedList = [newAddress, ...addresses.map((a) => ({ ...a, isDefault: false }))];
+        setActiveAddressId(newId, user);
+      } else {
+        updatedList = [...addresses, newAddress];
+      }
+
+      setAddresses(updatedList);
+      saveSavedAddresses(updatedList, user);
       showToast("New address saved successfully!");
     }
 
@@ -278,58 +262,68 @@ export default function AddressesSection() {
 
         {/* Address cards */}
         <section className={s.addressGrid} aria-label="Saved addresses">
-          {addresses.map((addr) => (
-            <article
-              key={addr.id}
-              className={`${s.addressCard} ${addr.isDefault ? s.isDefault : ""}`}
-            >
-              <header className={s.addressHead}>
-                <span className={s.addressIcon}>
-                  <img src={addr.icon} alt="" width="18" height="18" />
-                </span>
-                <h2>{addr.title}</h2>
-                {addr.isDefault && <span className={s.badge}>Default</span>}
-              </header>
-              <strong className={s.addressName}>{addr.name}</strong>
-              <p className={s.addressLines}>
-                {addr.line1}, {addr.line2}
-                {addr.landmark && (
-                  <>
-                    <br />
-                    {addr.landmark}
-                  </>
-                )}
-                <br />
-                {addr.city} – {addr.pincode}
-              </p>
-              <p className={s.addressPhone}>Phone: {addr.phone ? addr.phone.replace(/^Phone:\s*/, "") : displayPhone}</p>
-              <footer className={s.addressActions}>
-                <button
-                  className={s.linkBtn}
-                  type="button"
-                  onClick={() => handleEdit(addr)}
-                >
-                  Edit
-                </button>
-                <button
-                  className={`${s.linkBtn} ${s.danger}`}
-                  type="button"
-                  onClick={() => handleRemove(addr.id)}
-                >
-                  Remove
-                </button>
-                {!addr.isDefault && (
+          {addresses.map((addr) => {
+            const cardName = user?.name || addr.name || displayName;
+
+            return (
+              <article
+                key={addr.id}
+                className={`${s.addressCard} ${addr.isDefault ? s.isDefault : ""}`}
+              >
+                <header className={s.addressHead}>
+                  <span className={s.addressIcon}>
+                    <img src={getAddressIcon(addr.icon)} alt="" width="18" height="18" />
+                  </span>
+                  <h2>{addr.title || addr.tag || (addr.type ? addr.type.toUpperCase() : "HOME")}</h2>
+                  {addr.isDefault && <span className={s.badge}>Default</span>}
+                </header>
+                <strong className={s.addressName}>{cardName}</strong>
+                <p className={s.addressLines}>
+                  {addr.line1 ? (
+                    <>
+                      {addr.line1}, {addr.line2}
+                      {addr.landmark && (
+                        <>
+                          <br />
+                          {addr.landmark}
+                        </>
+                      )}
+                      <br />
+                      {addr.city || "Noida"} – {addr.pincode}
+                    </>
+                  ) : (
+                    addr.fullAddress || addr.shortAddress || "Sector 62, Noida"
+                  )}
+                </p>
+                <p className={s.addressPhone}>Phone: {addr.phone ? addr.phone.replace(/^Phone:\s*/, "") : displayPhone}</p>
+                <footer className={s.addressActions}>
                   <button
                     className={s.linkBtn}
                     type="button"
-                    onClick={() => handleSetDefault(addr.id)}
+                    onClick={() => handleEdit(addr)}
                   >
-                    Set as default
+                    Edit
                   </button>
-                )}
-              </footer>
-            </article>
-          ))}
+                  <button
+                    className={`${s.linkBtn} ${s.danger}`}
+                    type="button"
+                    onClick={() => handleRemove(addr.id)}
+                  >
+                    Remove
+                  </button>
+                  {!addr.isDefault && (
+                    <button
+                      className={s.linkBtn}
+                      type="button"
+                      onClick={() => handleSetDefault(addr.id)}
+                    >
+                      Set as default
+                    </button>
+                  )}
+                </footer>
+              </article>
+            );
+          })}
         </section>
 
         {/* Add new address form */}
@@ -609,4 +603,3 @@ export default function AddressesSection() {
     </ProfileLayout>
   );
 }
-

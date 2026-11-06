@@ -9,7 +9,7 @@ import { getStoredWalletBalance, getSpinState } from "@/lib/wallet";
 
 export default function PlayZonePage() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [balance, setBalance] = useState(350);
+  const [balance, setBalance] = useState(0);
   const [spinState, setSpinState] = useState({
     spinsAvailable: 1,
     streakDays: 3,

@@ -3,7 +3,13 @@
 import Link from "next/link";
 import s from "./UserDropdown.module.css";
 
-export default function UserDropdown({ isLoggedIn, user, onClose, onLogout }) {
+export default function UserDropdown({
+  isLoggedIn,
+  user,
+  walletBalance = 0,
+  onClose,
+  onLogout,
+}) {
   return (
     <div className={s.dropdown} role="menu" aria-label="User Account Menu">
       {/* Top action row */}
@@ -128,29 +134,27 @@ export default function UserDropdown({ isLoggedIn, user, onClose, onLogout }) {
           <span className={s.menuLabel}>My Coupon</span>
         </Link>
 
-        {/* Wallet kept inside My Account when logged in */}
-        {isLoggedIn && (
-          <Link href="/wallet" className={s.menuItem} onClick={onClose}>
-            <span className={s.menuIcon}>
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
-                <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
-                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
-              </svg>
-            </span>
-            <span className={s.menuLabel}>Wallet</span>
-            <span className={s.walletBadge}>₹25</span>
-          </Link>
-        )}
+        {/* Wallet */}
+        <Link href="/wallet" className={s.menuItem} onClick={onClose}>
+          <span className={s.menuIcon}>
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+              <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+              <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+            </svg>
+          </span>
+          <span className={s.menuLabel}>Wallet</span>
+          <span className={s.walletBadge}>₹{Math.round(walletBalance)}</span>
+        </Link>
 
         <Link href="/faq" className={s.menuItem} onClick={onClose}>
           <span className={s.menuIcon}>

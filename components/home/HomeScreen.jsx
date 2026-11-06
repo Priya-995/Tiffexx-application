@@ -3,10 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getInitialCart, saveCart } from "@/lib/cart";
+import { getInitialCart, saveCart, checkKitchenConflict } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { useAuth } from "@/lib/auth";
+import { getUserReorderPicks } from "@/lib/orders";
 import { slugify } from "@/lib/kitchens";
 import PlanCard from "@/components/ui/PlanCard";
+import KitchenConflictModal from "@/components/cart/KitchenConflictModal";
 import s from "./HomeScreen.module.css";
 
 const PARTNERS_DATA = [
@@ -539,6 +542,8 @@ const POPULAR_PICKS = [
 export default function HomeScreen() {
   const router = useRouter();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { user, isLoggedIn, loading: authLoading } = useAuth();
+  const [reorderPicks, setReorderPicks] = useState([]);
 
   // Active States
   const [activeChip, setActiveChip] = useState("Nearest");
@@ -547,6 +552,55 @@ export default function HomeScreen() {
   const [activeMealTab, setActiveMealTab] = useState("lunch");
   const [heroDot, setHeroDot] = useState(0);
   const [toastMessage, setToastMessage] = useState("");
+  const [cartItems, setCartItems] = useState([]);
+
+  // Kitchen Conflict Modal state
+  const [conflictModal, setConflictModal] = useState({
+    isOpen: false,
+    currentKitchen: "",
+    newKitchen: "",
+    pendingItem: null,
+    actionType: "add", // 'add' | 'subscribe'
+  });
+
+  // Reorder section: only populated for authenticated users based on previously ordered items
+  useEffect(() => {
+    if (isLoggedIn) {
+      setReorderPicks(getUserReorderPicks());
+    } else {
+      setReorderPicks([]);
+    }
+
+    const handleOrdersSync = () => {
+      if (isLoggedIn) {
+        setReorderPicks(getUserReorderPicks());
+      }
+    };
+
+    window.addEventListener("tiffexx:order-placed", handleOrdersSync);
+    window.addEventListener("storage", handleOrdersSync);
+    return () => {
+      window.removeEventListener("tiffexx:order-placed", handleOrdersSync);
+      window.removeEventListener("storage", handleOrdersSync);
+    };
+  }, [isLoggedIn]);
+
+  // Keep local cart state in sync with global cart events
+  useEffect(() => {
+    try {
+      const initCart = getInitialCart();
+      setCartItems(initCart?.items || []);
+    } catch (e) {}
+
+    const onCartUpdated = (e) => {
+      setCartItems(e.detail?.items || []);
+    };
+
+    window.addEventListener("tiffexx:cart-updated", onCartUpdated);
+    return () => {
+      window.removeEventListener("tiffexx:cart-updated", onCartUpdated);
+    };
+  }, []);
 
   // Countdown timer state
   const [timeLeft, setTimeLeft] = useState({
@@ -589,20 +643,36 @@ export default function HomeScreen() {
 
   const handleAddToCart = (item) => {
     const currentCart = getInitialCart();
+    const itemKitchen = item.kitchen || "Tiffexx Kitchen";
+
+    // Enforce single-kitchen ordering constraint
+    const conflict = checkKitchenConflict(itemKitchen, currentCart);
+    if (conflict.conflict) {
+      setConflictModal({
+        isOpen: true,
+        currentKitchen: conflict.currentKitchen,
+        newKitchen: conflict.newKitchen,
+        pendingItem: item,
+        actionType: "add",
+      });
+      return;
+    }
+
     const items = [...(currentCart.items || [])];
     const existingIndex = items.findIndex((x) => x.id === item.id || x.name === item.name);
 
     if (existingIndex > -1) {
-      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 99);
     } else {
       items.push({
         id: item.id,
         name: item.name || item.dish || item.title,
-        tag: item.tag || "Tiffin Meal",
+        tag: item.tag || (item.mealType === "dinner" ? "Dinner" : "Lunch"),
         sub: item.sub || item.kitchen || "Daily fresh meal",
         perDay: item.price,
         qty: 1,
-        kitchen: item.kitchen || "Tiffexx Kitchen",
+        kitchen: itemKitchen,
+        img: item.img,
         liked: false,
       });
     }
@@ -612,14 +682,68 @@ export default function HomeScreen() {
     showToast(`✓ Added "${item.name || item.dish || item.title}" to cart!`);
   };
 
+  const handleUpdateQty = (item, delta) => {
+    const currentCart = getInitialCart();
+    const itemKitchen = item.kitchen || "Tiffexx Kitchen";
+
+    // If increasing, verify kitchen conflict
+    if (delta > 0) {
+      const conflict = checkKitchenConflict(itemKitchen, currentCart);
+      if (conflict.conflict) {
+        setConflictModal({
+          isOpen: true,
+          currentKitchen: conflict.currentKitchen,
+          newKitchen: conflict.newKitchen,
+          pendingItem: item,
+          actionType: "add",
+        });
+        return;
+      }
+    }
+
+    const items = [...(currentCart.items || [])];
+    const idx = items.findIndex((x) => x.id === item.id || x.name === item.name);
+
+    if (idx === -1) {
+      if (delta > 0) handleAddToCart(item);
+      return;
+    }
+
+    const newQty = (items[idx].qty || 1) + delta;
+    if (newQty <= 0) {
+      const removed = items.splice(idx, 1)[0];
+      showToast(`Removed "${removed.name}" from cart.`);
+    } else {
+      items[idx].qty = Math.min(newQty, 99);
+    }
+
+    const updated = { ...currentCart, items };
+    saveCart(updated);
+  };
+
   const handleSubscribePlan = (plan) => {
     const currentCart = getInitialCart();
+    const planKitchen = plan.kitchen || "Perfect Kitchen";
+
+    // Enforce single-kitchen ordering constraint
+    const conflict = checkKitchenConflict(planKitchen, currentCart);
+    if (conflict.conflict) {
+      setConflictModal({
+        isOpen: true,
+        currentKitchen: conflict.currentKitchen,
+        newKitchen: conflict.newKitchen,
+        pendingItem: plan,
+        actionType: "subscribe",
+      });
+      return;
+    }
+
     const items = [...(currentCart.items || [])];
     const planName = plan.title || plan.name || "Lunch Plan";
     const existingIndex = items.findIndex((x) => x.id === plan.id || x.name === planName);
 
     if (existingIndex > -1) {
-      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 9);
+      items[existingIndex].qty = Math.min((items[existingIndex].qty || 1) + 1, 99);
     } else {
       items.push({
         id: plan.id,
@@ -628,7 +752,7 @@ export default function HomeScreen() {
         sub: plan.descBold ? `${plan.descBold} ${plan.descLight || ""}` : "Daily home-style tiffin",
         perDay: plan.price ? Number(String(plan.price).replace(/[^\d]/g, "")) : 89,
         qty: 1,
-        kitchen: plan.kitchen || "Perfect Kitchen",
+        kitchen: planKitchen,
         liked: true,
       });
     }
@@ -636,6 +760,58 @@ export default function HomeScreen() {
     const updated = { ...currentCart, items };
     saveCart(updated);
     router.push("/cart?checkout=true");
+  };
+
+  const handleResolveConflict = () => {
+    const item = conflictModal.pendingItem;
+    if (!item) {
+      setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" });
+      return;
+    }
+
+    const currentCart = getInitialCart();
+    const itemKitchen = item.kitchen || conflictModal.newKitchen || "Tiffexx Kitchen";
+
+    if (conflictModal.actionType === "subscribe") {
+      const planName = item.title || item.name || "Lunch Plan";
+      const resetItems = [
+        {
+          id: item.id,
+          name: planName,
+          tag: "Plan",
+          sub: item.descBold ? `${item.descBold} ${item.descLight || ""}` : "Daily home-style tiffin",
+          perDay: item.price ? Number(String(item.price).replace(/[^\d]/g, "")) : 89,
+          qty: 1,
+          kitchen: itemKitchen,
+          liked: true,
+        },
+      ];
+      const updated = { ...currentCart, items: resetItems };
+      saveCart(updated);
+      setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" });
+      router.push("/cart?checkout=true");
+      return;
+    }
+
+    // Default: 'add' item
+    const resetItems = [
+      {
+        id: item.id,
+        name: item.name || item.dish || item.title,
+        tag: item.tag || (item.mealType === "dinner" ? "Dinner" : "Lunch"),
+        sub: item.sub || item.kitchen || "Daily fresh meal",
+        perDay: item.price,
+        qty: 1,
+        kitchen: itemKitchen,
+        img: item.img,
+        liked: false,
+      },
+    ];
+
+    const updated = { ...currentCart, items: resetItems };
+    saveCart(updated);
+    setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" });
+    showToast(`✓ Cart updated: Now ordering from ${itemKitchen}!`);
   };
 
   const handleToggleWishlist = (plan) => {
@@ -1047,6 +1223,8 @@ export default function HomeScreen() {
         <div className={`${s["h-scroll"]} ${s["meal-row"]}`}>
           {MEAL_ITEMS.filter((meal) => meal.mealType === activeMealTab).map((meal) => {
             const isSaved = isInWishlist(meal.id);
+            const inCart = cartItems.find((x) => x.id === meal.id || x.name === meal.name);
+            const cardQty = inCart ? (Number(inCart.qty) || 1) : 0;
 
             return (
               <article
@@ -1104,24 +1282,52 @@ export default function HomeScreen() {
                   </Link>
                   <div className={s["meal-foot"]}>
                     <b>₹{meal.price}</b>
-                    <button
-                      className={s.add}
-                      type="button"
-                      aria-label={`Add ${meal.name} to cart`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart({
-                          id: meal.id,
-                          name: meal.name,
-                          price: meal.price,
-                          tag: meal.mealType === "dinner" ? "Dinner" : "Lunch",
-                          kitchen: meal.kitchen,
-                          img: meal.img,
-                        });
-                      }}
-                    >
-                      <img src="/assets/add-icon-2.svg" alt="" />
-                    </button>
+                    {cardQty > 0 ? (
+                      <div className={s["qty-stepper"]} onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          className={s["qty-btn"]}
+                          aria-label={`Decrease ${meal.name} quantity`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateQty(meal, -1);
+                          }}
+                        >
+                          −
+                        </button>
+                        <span className={s["qty-val"]}>{cardQty}</span>
+                        <button
+                          type="button"
+                          className={s["qty-btn"]}
+                          aria-label={`Increase ${meal.name} quantity`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateQty(meal, 1);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className={s.add}
+                        type="button"
+                        aria-label={`Add ${meal.name} to cart`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart({
+                            id: meal.id,
+                            name: meal.name,
+                            price: meal.price,
+                            tag: meal.mealType === "dinner" ? "Dinner" : "Lunch",
+                            kitchen: meal.kitchen,
+                            img: meal.img,
+                          });
+                        }}
+                      >
+                        <img src="/assets/add-icon-2.svg" alt="" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </article>
@@ -1130,65 +1336,78 @@ export default function HomeScreen() {
         </div>
       </section>
 
-      {/* Your popular picks */}
-      <section className={s.plans}>
-        <div className={s["section-head"]}>
-          <div>
-            <h2>Your Popular Picks</h2>
-            <p>Daily tiffin on autopilot, picked from kitchens you&apos;ve ordered from</p>
+      {/* Your popular picks / Reorder section - only displayed for authenticated users based on previous orders */}
+      {!authLoading && isLoggedIn && reorderPicks.length > 0 && (
+        <section className={s.plans} aria-labelledby="reorder-picks-title">
+          <div className={s["section-head"]}>
+            <div>
+              <h2 id="reorder-picks-title">Your Popular Picks</h2>
+              <p>Daily tiffin on autopilot, picked from kitchens you&apos;ve ordered from</p>
+            </div>
+            <Link className={s["link-all"]} href="/orders">
+              See all →
+            </Link>
           </div>
-          <Link className={s["link-all"]} href="/partner-listing">
-            See all →
-          </Link>
-        </div>
-        <div className={`${s["h-scroll"]} ${s["meal-row"]}`}>
-          {POPULAR_PICKS.map((pop, i) => (
-            <article
-              key={`${pop.id}-${i}`}
-              className={s.pop}
-              onClick={() => router.push(`/${slugify(pop.kitchen)}`)}
-              title={`View ${pop.kitchen}`}
-            >
-              <div className={s["pop-img"]}>
-                <img src="/assets/popular-bg.png" alt={pop.dish} />
-                <span className={s["pop-rate"]}>
-                  <i>★</i>
-                  <b>4.6</b>
-                </span>
-              </div>
-              <div className={s["pop-body"]}>
-                <span className={s["cuisine-tag"]}>{pop.cuisine}</span>
-                <h4>
-                  <Link
-                    href={`/${slugify(pop.kitchen)}`}
-                    className={s["pop-kitchen"]}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {pop.kitchen}
-                  </Link>
-                </h4>
-                <span className={s.dish}>{pop.dish}</span>
-                <div className={s["pop-price"]}>
-                  ₹{pop.price} {pop.isDay && <small>/day</small>}
+          <div className={`${s["h-scroll"]} ${s["meal-row"]}`}>
+            {reorderPicks.map((pop, i) => (
+              <article
+                key={`${pop.id}-${i}`}
+                className={s.pop}
+                onClick={() => router.push(`/${slugify(pop.kitchen)}`)}
+                title={`Reorder from ${pop.kitchen}`}
+              >
+                <div className={s["pop-img"]}>
+                  <img src={pop.img || "/assets/popular-bg.png"} alt={pop.dish} />
+                  <span className={s["pop-rate"]}>
+                    <i>★</i>
+                    <b>{pop.rating || "4.6"}</b>
+                  </span>
                 </div>
-                <button
-                  className={s["btn-reorder"]}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/${slugify(pop.kitchen)}`);
-                  }}
-                >
-                  Reorder
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+                <div className={s["pop-body"]}>
+                  <span className={s["cuisine-tag"]}>{pop.cuisine}</span>
+                  <h4>
+                    <Link
+                      href={`/${slugify(pop.kitchen)}`}
+                      className={s["pop-kitchen"]}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {pop.kitchen}
+                    </Link>
+                  </h4>
+                  <span className={s.dish}>{pop.dish}</span>
+                  <div className={s["pop-price"]}>
+                    ₹{pop.price} {pop.isDay && <small>/day</small>}
+                  </div>
+                  <button
+                    className={s["btn-reorder"]}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/${slugify(pop.kitchen)}`);
+                    }}
+                  >
+                    Reorder
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Interactive feedback toast */}
       {toastMessage && <div className={s.toast}>{toastMessage}</div>}
+
+      {/* Kitchen Conflict Modal */}
+      <KitchenConflictModal
+        isOpen={conflictModal.isOpen}
+        currentKitchen={conflictModal.currentKitchen}
+        newKitchen={conflictModal.newKitchen}
+        onConfirm={handleResolveConflict}
+        onCancel={() =>
+          setConflictModal({ isOpen: false, currentKitchen: "", newKitchen: "", pendingItem: null, actionType: "add" })
+        }
+      />
     </main>
   );
 }

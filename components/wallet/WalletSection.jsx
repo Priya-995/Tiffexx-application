@@ -4,46 +4,23 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { getStoredWalletBalance, addWalletAmount } from "@/lib/wallet";
+import {
+  getStoredWalletBalance,
+  getStoredWalletTransactions,
+  addWalletAmount,
+} from "@/lib/wallet";
 import ProfileLayout from "@/components/profile/ProfileLayout";
 import s from "./WalletSection.module.css";
 
-const INITIAL_TRANSACTIONS = [
-  {
-    id: "tx-1",
-    title: "Order confirmed",
-    meta: "Order ID: TX-10482",
-    amount: "−₹39",
-    type: "debit",
-    date: "27 Oct 2026, 16:10",
-  },
-  {
-    id: "tx-2",
-    title: "Order refund",
-    meta: "Order ID: TX-10431",
-    amount: "+₹34",
-    type: "credit",
-    date: "25 Oct 2026, 14:52",
-  },
-  {
-    id: "tx-3",
-    title: "Order refund",
-    meta: "Order ID: TX-10431",
-    amount: "+₹5",
-    type: "credit",
-    date: "25 Oct 2026, 14:52",
-  },
-];
-
 export default function WalletSection() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, isLoggedIn, logout } = useAuth();
 
   // Balance & transactions state
-  const [balance, setBalance] = useState(25.0);
-  const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
+  const [balance, setBalance] = useState(0);
+  const [transactions, setTransactions] = useState([]);
   const [showAddMoney, setShowAddMoney] = useState(false);
-  const [topupAmount, setTopupAmount] = useState(100);
+  const [topupAmount, setTopupAmount] = useState(200);
   const [toastMessage, setToastMessage] = useState("");
 
   const showToast = (msg) => {
@@ -52,19 +29,34 @@ export default function WalletSection() {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setBalance(getStoredWalletBalance());
-      const handleUpdate = () => setBalance(getStoredWalletBalance());
-      window.addEventListener("tiffexx:wallet-updated", handleUpdate);
-      return () => window.removeEventListener("tiffexx:wallet-updated", handleUpdate);
-    }
-  }, []);
+    const syncWallet = () => {
+      if (isLoggedIn && user) {
+        setBalance(getStoredWalletBalance(user));
+        setTransactions(getStoredWalletTransactions(user));
+      } else {
+        setBalance(0);
+        setTransactions([]);
+      }
+    };
 
-  const displayName = user?.name || "Ananya Rao";
+    syncWallet();
+
+    const handleUpdate = () => syncWallet();
+    window.addEventListener("tiffexx:wallet-updated", handleUpdate);
+    window.addEventListener("tiffexx:wallet-transactions-updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("tiffexx:wallet-updated", handleUpdate);
+      window.removeEventListener("tiffexx:wallet-transactions-updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, [isLoggedIn, user]);
+
+  const displayName = user?.name || "User";
   const displayPhone = user?.phone || "+91 98XXX XXX10";
 
   const getInitials = (name) => {
-    if (!name) return "AR";
+    if (!name) return "U";
     const parts = name.trim().split(" ");
     if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
     return name.slice(0, 2).toUpperCase();
@@ -72,28 +64,20 @@ export default function WalletSection() {
 
   const handleAddMoneySubmit = (e) => {
     e.preventDefault();
+    if (!isLoggedIn || !user) {
+      showToast("Please sign in to add money to your wallet.");
+      router.push("/signin?redirect=/wallet");
+      return;
+    }
+
     const amountNum = Number(topupAmount);
     if (!amountNum || amountNum <= 0) return;
 
-    const newBalance = addWalletAmount(amountNum, "Instant Wallet Top-up");
+    const newBalance = addWalletAmount(amountNum, "Instant Wallet Top-up", user);
     setBalance(newBalance);
-
-    const now = new Date();
-    const dateStr = now.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-    const timeStr = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-
-    const newTx = {
-      id: `tx-${Date.now()}`,
-      title: "Wallet Top-up",
-      meta: `Transaction ID: TX-${Math.floor(10000 + Math.random() * 90000)}`,
-      amount: `+₹${amountNum}`,
-      type: "credit",
-      date: `${dateStr}, ${timeStr}`,
-    };
-
-    setTransactions([newTx, ...transactions]);
+    setTransactions(getStoredWalletTransactions(user));
     setShowAddMoney(false);
-    showToast(`✓ Added ₹${amountNum} to your wallet! New balance: ₹${newBalance.toFixed(0)}`);
+    showToast(`✓ Added ₹${amountNum} to your wallet! New balance: ₹${Math.round(newBalance)}`);
   };
 
   const handleSignOut = () => {
@@ -129,7 +113,14 @@ export default function WalletSection() {
           <button
             type="button"
             className={`${s.btn} ${s["btn--primary"]}`}
-            onClick={() => setShowAddMoney(true)}
+            onClick={() => {
+              if (!isLoggedIn || !user) {
+                showToast("Please sign in to add money to your wallet.");
+                router.push("/signin?redirect=/wallet");
+                return;
+              }
+              setShowAddMoney(true);
+            }}
           >
             Add Money
           </button>
@@ -148,26 +139,37 @@ export default function WalletSection() {
             </button>
           </header>
 
-          <ul className={s.txns}>
-            {transactions.map((tx) => (
-              <li key={tx.id} className={s.txn}>
-                <div>
-                  <p className={s.txn__title}>{tx.title}</p>
-                  <p className={s.txn__meta}>{tx.meta}</p>
-                </div>
-                <div className={s.txn__end}>
-                  <p
-                    className={`${s.txn__amount} ${
-                      tx.type === "credit" ? s["txn__amount--credit"] : s["txn__amount--debit"]
-                    }`}
-                  >
-                    {tx.amount}
-                  </p>
-                  <p className={s.txn__meta}>{tx.date}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          {transactions.length === 0 ? (
+            <div style={{ padding: "32px 18px", textAlign: "center", color: "#6a625e" }}>
+              <p style={{ margin: 0, fontWeight: 600, fontSize: "14px" }}>No transactions yet</p>
+              <p style={{ margin: "6px 0 0", fontSize: "12.5px", color: "#9c8e82" }}>
+                {isLoggedIn
+                  ? "Top up your wallet or order meals to view transaction history."
+                  : "Sign in to view your balance and transaction history."}
+              </p>
+            </div>
+          ) : (
+            <ul className={s.txns}>
+              {transactions.map((tx) => (
+                <li key={tx.id} className={s.txn}>
+                  <div>
+                    <p className={s.txn__title}>{tx.title}</p>
+                    <p className={s.txn__meta}>{tx.meta}</p>
+                  </div>
+                  <div className={s.txn__end}>
+                    <p
+                      className={`${s.txn__amount} ${
+                        tx.type === "credit" ? s["txn__amount--credit"] : s["txn__amount--debit"]
+                      }`}
+                    >
+                      {tx.amount}
+                    </p>
+                    <p className={s.txn__meta}>{tx.date}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         {/* Help cards */}
